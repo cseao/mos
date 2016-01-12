@@ -45,16 +45,16 @@ OBJS+= ge25519_scalarmult.o
 OBJS+= ge25519_lookup.o
 OBJS+= ge25519_lookup_niels.o
 
-OBJS+= ge4x.o 
-OBJS+= gfe4x.o 
-OBJS+= gfe4x_add.o 
-OBJS+= gfe4x_nsquare.o 
-OBJS+= gfe4x_square.o 
+OBJS+= ge4x.o
+OBJS+= gfe4x.o
+OBJS+= gfe4x_add.o
+OBJS+= gfe4x_nsquare.o
+OBJS+= gfe4x_square.o
 OBJS+= gfe4x_getparity.o
-OBJS+= gfe4x_iseq_vartime.c
-OBJS+= gfe4x_mul.o 
+OBJS+= gfe4x_iseq_vartime.o
+OBJS+= gfe4x_mul.o
 OBJS+= gfe4x_pow2523.o
-OBJS+= gfe4x_sub.o 
+OBJS+= gfe4x_sub.o
 
 OBJS+= ge4x_double_p1p1.o
 OBJS+= ge4x_add_p1p1.o
@@ -69,15 +69,12 @@ OBJS+= consts4x.o
 
 ######################################################
 
-all: ot_sender_test ot_receiver_test
+all: libot.a
 
-ot_sender_test: ot_sender_test.o $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ 
+libot.a: $(OBJS)
+	ar rcs libot.a $(OBJS)
 
-ot_receiver_test: ot_receiver_test.o $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ 
-
-%.o: %.c 
+%.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
 %.o: %.s
@@ -88,7 +85,7 @@ ot_receiver_test: ot_receiver_test.o $(OBJS)
 .PHONY: clean
 
 clean:
-	-rm -f ot_sender_test 
+	-rm -f ot_sender_test
 	-rm -f ot_receiver_test
+	-rm -f libot.a
 	-rm -f *.o
-

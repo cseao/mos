@@ -17,12 +17,8 @@ void ot_receiver_test(RECEIVER *receiver, int sockfd) {
     unsigned char keys[4][HASHBYTES];
     unsigned char cs[4];
 
-    //
-
     reading(sockfd, receiver->S_pack, sizeof(receiver->S_pack));
     receiver_procS(receiver);
-
-    //
 
     receiver_maketable(receiver);
 
@@ -41,8 +37,6 @@ void ot_receiver_test(RECEIVER *receiver, int sockfd) {
         writing(sockfd, Rs_pack, sizeof(Rs_pack));
 
         receiver_keygen(receiver, keys);
-
-        //
 
         if (VERBOSE) {
             for (j = 0; j < 4; j++) {
@@ -65,14 +59,10 @@ int main(int argc, char *argv[]) {
 
     RECEIVER receiver;
 
-    //
-
     if (argc != 3) {
         fprintf(stderr, "usage %s hostname port\n", argv[0]);
         exit(-1);
     }
-
-    //
 
     client_connect(&sockfd, argv[1], atoi(argv[2]));
 
@@ -91,14 +81,10 @@ int main(int argc, char *argv[]) {
 
     t += cpucycles_amd64cpuinfo();
 
-    //
-
     if (!VERBOSE)
         printf("[n=%d] Elapsed time:  %lld cycles\n", NOTS, t);
 
     shutdown(sockfd, 2);
-
-    //
 
     return 0;
 }

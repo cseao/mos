@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
 #include "ot_sender.h"
 

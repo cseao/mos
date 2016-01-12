@@ -27,4 +27,3 @@ void receiver_rsgen(RECEIVER *, unsigned char *, unsigned char *);
 void receiver_keygen(RECEIVER *, unsigned char (*)[HASHBYTES]);
 
 #endif //ifndef OT_RECEIVER_H
-
