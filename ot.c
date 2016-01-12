@@ -14,6 +14,8 @@
 #include "randombytes.h"
 
 
+static long nOTs = 100;
+
 void ot_sender_test(SENDER *sender, int newsockfd) {
     int i, j, k;
     unsigned char S_pack[PACKBYTES];
@@ -23,7 +25,7 @@ void ot_sender_test(SENDER *sender, int newsockfd) {
     sender_genS(sender, S_pack);
     writing(newsockfd, S_pack, sizeof(S_pack));
 
-    for (i = 0; i < NOTS; i += 4) {
+    for (i = 0; i < nOTs; i += 4) {
         reading(newsockfd, Rs_pack, sizeof(Rs_pack));
 
         sender_keygen(sender, Rs_pack, keys);
@@ -93,7 +95,7 @@ void ot_receiver_test(RECEIVER *receiver, int sockfd) {
 
     receiver_maketable(receiver);
 
-    for (i = 0; i < NOTS; i += 4) {
+    for (i = 0; i < nOTs; i += 4) {
         randombytes(cs, sizeof(cs));
 
         for (j = 0; j < 4; j++) {
@@ -152,10 +154,12 @@ int receiver_main(const char *host, const int port) {
 }
 
 static const char* short_options = "hH:p:n:";
+
 static const struct option long_options[] = {
   {"help", no_argument, 0, 'h'},
   {"host", required_argument, 0, 'H'},
   {"port", required_argument, 0, 'p'},
+  {"nots", required_argument, 0, 'n'},
   {0, 0, 0, 0}
 };
 
