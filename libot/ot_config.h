@@ -8,7 +8,4 @@
 
 #define DIST 1
 
-#define VERBOSE 1
-
 #endif //ifndef OT_CONFIG_H
-

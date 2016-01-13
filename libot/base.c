@@ -22,20 +22,18 @@ void baseot_sender(SENDER *sender, int newsockfd, int nOTs) {
 
         sender_keygen(sender, Rs_pack, keys);
 
-        if (VERBOSE) {
-            for (j = 0; j < 4; j++) {
-                printf("%4d-th sender keys:", i + j);
+        for (j = 0; j < 4; j++) {
+          printf("%4d-th sender keys:", i + j);
 
-                for (k = 0; k < HASHBYTES; k++)
-                    printf("%.2X", keys[0][j][k]);
-                printf(" ");
-                for (k = 0; k < HASHBYTES; k++)
-                    printf("%.2X", keys[1][j][k]);
-                printf("\n");
-            }
-
-            printf("\n");
+          for (k = 0; k < HASHBYTES; k++)
+            printf("%.2X", keys[0][j][k]);
+          printf(" ");
+          for (k = 0; k < HASHBYTES; k++)
+            printf("%.2X", keys[1][j][k]);
+          printf("\n");
         }
+
+        printf("\n");
     }
 }
 
@@ -57,9 +55,7 @@ void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs) {
 
         for (j = 0; j < 4; j++) {
             cs[j] &= 1;
-
-            if (VERBOSE)
-                printf("%4d-th choose bit = %d\n", i + j, cs[j]);
+            printf("%4d-th choose bit = %d\n", i + j, cs[j]);
         }
 
         receiver_rsgen(receiver, Rs_pack, cs);
@@ -68,14 +64,12 @@ void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs) {
 
         receiver_keygen(receiver, keys);
 
-        if (VERBOSE) {
-            for (j = 0; j < 4; j++) {
-                printf("%4d-th reciever key:", i + j);
+        for (j = 0; j < 4; j++) {
+          printf("%4d-th reciever key:", i + j);
 
-                for (k = 0; k < HASHBYTES; k++)
-                    printf("%.2X", keys[j][k]);
-                printf("\n");
-            }
+          for (k = 0; k < HASHBYTES; k++)
+            printf("%.2X", keys[j][k]);
+          printf("\n");
         }
     }
 }
