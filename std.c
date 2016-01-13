@@ -31,6 +31,12 @@ void std_sender(SENDER *s, int sockfd, int nOTs)
 
 void std_receiver(RECEIVER *r, int sockfd, int nOTs)
 {
+  int p[2];
+  if (pipe(p) == -1) {
+    perror("Cannot create pipe");
+    exit(EXIT_FAILURE);
+  }
+
   uint8_t choices[nOTs];
   randombytes(choices, nOTs);
   for (int i = 0; i < nOTs; ++i) {
@@ -38,5 +44,13 @@ void std_receiver(RECEIVER *r, int sockfd, int nOTs)
     printf("choose bit = %d\n", choices[i]);
   }
 
-  baseot_receiver(r, sockfd, nOTs, choices);
+  uint8_t key[HASHBYTES];
+  baseot_receiver(r, sockfd, nOTs, choices, p[1]);
+  for (int i = 0; i < nOTs; ++i) {
+    reading(p[0], key, HASHBYTES);
+    for (int k = 0; k < HASHBYTES; k++) {
+      printf("%.2X", key[k]);
+    }
+    printf("\n");
+  }
 }

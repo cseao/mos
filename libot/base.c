@@ -30,8 +30,8 @@ void baseot_sender(SENDER *sender, int newsockfd, int nOTs, int outfd) {
 }
 
 
-void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs, uint8_t *choices) {
-    int i, j, k;
+void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs, uint8_t *choices, int outfd) {
+    int i, j;
 
     unsigned char Rs_pack[4 * PACKBYTES];
     unsigned char keys[4][HASHBYTES];
@@ -48,11 +48,7 @@ void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs, uint8_t *choices)
         receiver_keygen(receiver, keys);
         choices += 4;
         for (j = 0; j < 4; j++) {
-          printf("%4d-th reciever key:", i + j);
-
-          for (k = 0; k < HASHBYTES; k++)
-            printf("%.2X", keys[j][k]);
-          printf("\n");
+          writing(outfd, keys[j], HASHBYTES);
         }
     }
 }

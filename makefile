@@ -12,4 +12,7 @@ libot:
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-.PHONY: libot
+clean:
+	-rm -f *.o ot
+
+.PHONY: libot clean
