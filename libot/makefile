@@ -67,6 +67,7 @@ OBJS+= ge4x_lookup.o
 OBJS+= consts.o
 OBJS+= consts4x.o
 
+OBJS+= base.o
 ######################################################
 
 all: libot.a
