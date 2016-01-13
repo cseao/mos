@@ -30,12 +30,11 @@ void baseot_sender(SENDER *sender, int newsockfd, int nOTs, int outfd) {
 }
 
 
-void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs) {
+void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs, uint8_t *choices) {
     int i, j, k;
 
     unsigned char Rs_pack[4 * PACKBYTES];
     unsigned char keys[4][HASHBYTES];
-    unsigned char cs[4];
 
     reading(sockfd, receiver->S_pack, sizeof(receiver->S_pack));
     receiver_procS(receiver);
@@ -43,19 +42,11 @@ void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs) {
     receiver_maketable(receiver);
 
     for (i = 0; i < nOTs; i += 4) {
-        randombytes(cs, sizeof(cs));
-
-        for (j = 0; j < 4; j++) {
-            cs[j] &= 1;
-            printf("%4d-th choose bit = %d\n", i + j, cs[j]);
-        }
-
-        receiver_rsgen(receiver, Rs_pack, cs);
-
+        receiver_rsgen(receiver, Rs_pack, choices);
         writing(sockfd, Rs_pack, sizeof(Rs_pack));
 
         receiver_keygen(receiver, keys);
-
+        choices += 4;
         for (j = 0; j < 4; j++) {
           printf("%4d-th reciever key:", i + j);
 

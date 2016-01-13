@@ -31,5 +31,12 @@ void std_sender(SENDER *s, int sockfd, int nOTs)
 
 void std_receiver(RECEIVER *r, int sockfd, int nOTs)
 {
-  baseot_receiver(r, sockfd, nOTs);
+  uint8_t choices[nOTs];
+  randombytes(choices, nOTs);
+  for (int i = 0; i < nOTs; ++i) {
+    choices[i] &= 1;
+    printf("choose bit = %d\n", choices[i]);
+  }
+
+  baseot_receiver(r, sockfd, nOTs, choices);
 }
