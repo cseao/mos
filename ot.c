@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "libot/ot.h"
+#include "otext.h"
 
 static long nOTs = 100;
 
@@ -35,7 +36,7 @@ int sender_main(int port) {
         exit(-1);
     }
     START_TIMEIT();
-    baseot_sender(&sender, newsockfd, nOTs);
+    std_sender(&sender, newsockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
@@ -67,7 +68,7 @@ int receiver_main(const char *host, const int port) {
     }
 
     START_TIMEIT();
-    baseot_receiver(&receiver, sockfd, nOTs);
+    std_receiver(&receiver, sockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 

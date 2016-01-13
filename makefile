@@ -1,9 +1,10 @@
 CC=cc
 
+OBJS= ot.o std.o
 all: ot libot
 
-ot: ot.o
-	$(CC) $(CFLAGS) ot.o -L libot -lot -lb2 -o ot
+ot: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -L libot -lot -lb2 -o ot
 
 libot:
 	$(MAKE) -C libot/

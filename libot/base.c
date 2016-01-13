@@ -8,8 +8,8 @@
 #include "ot.h"
 
 
-void baseot_sender(SENDER *sender, int newsockfd, int nOTs) {
-    int i, j, k;
+void baseot_sender(SENDER *sender, int newsockfd, int nOTs, int outfd) {
+    int i, j;
     unsigned char S_pack[PACKBYTES];
     unsigned char Rs_pack[4 * PACKBYTES];
     unsigned char keys[2][4][HASHBYTES];
@@ -23,17 +23,9 @@ void baseot_sender(SENDER *sender, int newsockfd, int nOTs) {
         sender_keygen(sender, Rs_pack, keys[0], keys[1]);
 
         for (j = 0; j < 4; j++) {
-          printf("%4d-th sender keys:", i + j);
-
-          for (k = 0; k < HASHBYTES; k++)
-            printf("%.2X", keys[0][j][k]);
-          printf(" ");
-          for (k = 0; k < HASHBYTES; k++)
-            printf("%.2X", keys[1][j][k]);
-          printf("\n");
+          writing(outfd, keys[0][j], HASHBYTES);
+          writing(outfd, keys[1][j], HASHBYTES);
         }
-
-        printf("\n");
     }
 }
 
