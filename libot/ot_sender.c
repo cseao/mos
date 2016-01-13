@@ -31,14 +31,13 @@ void sender_genS(SENDER *s, unsigned char *S_pack) {
 }
 
 void sender_keygen(SENDER *s, unsigned char *Rs_pack,
-                   unsigned char (*keys)[4][HASHBYTES]) {
+                   unsigned char keys0[4][HASHBYTES],
+                   unsigned char keys1[4][HASHBYTES]) {
     int i;
 
     ge4x P0;
     ge4x P1;
     ge4x Rs;
-
-    //
 
     if (ge4x_unpack_vartime(&Rs, Rs_pack) != 0) {
         fprintf(stderr, "Error: point decompression failed\n");
@@ -51,8 +50,8 @@ void sender_keygen(SENDER *s, unsigned char *Rs_pack,
     ge4x_pack(Rs_pack, &Rs); // E_2(R^i)
 
     ge4x_scalarmults(&P0, &Rs, &s->y);              // 64yR^i
-    ge4x_hash(keys[0][0], s->S_pack, Rs_pack, &P0); // E_2(yR^i)
+    ge4x_hash(keys0[0], s->S_pack, Rs_pack, &P0); // E_2(yR^i)
 
     ge4x_sub(&P1, &s->yS, &P0);                     // 64(T-yR^i)
-    ge4x_hash(keys[1][0], s->S_pack, Rs_pack, &P1); // E_2(T - yR^i)
+    ge4x_hash(keys1[0], s->S_pack, Rs_pack, &P1); // E_2(T - yR^i)
 }

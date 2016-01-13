@@ -20,7 +20,7 @@ void baseot_sender(SENDER *sender, int newsockfd, int nOTs) {
     for (i = 0; i < nOTs; i += 4) {
         reading(newsockfd, Rs_pack, sizeof(Rs_pack));
 
-        sender_keygen(sender, Rs_pack, keys);
+        sender_keygen(sender, Rs_pack, keys[0], keys[1]);
 
         for (j = 0; j < 4; j++) {
           printf("%4d-th sender keys:", i + j);
