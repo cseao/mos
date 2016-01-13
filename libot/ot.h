@@ -7,5 +7,5 @@
 #include "ot_receiver.h"
 #include "network.h"
 
-void baseot_sender(SENDER *sender, int newsockfd);
-void baseot_receiver(RECEIVER *receiver, int sockfd);
+void baseot_sender(SENDER *sender, int newsockfd, int nOTs);
+void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs);

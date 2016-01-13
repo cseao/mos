@@ -8,9 +8,7 @@
 #include "ot.h"
 
 
-static long nOTs = 100000000;
-
-void baseot_sender(SENDER *sender, int newsockfd) {
+void baseot_sender(SENDER *sender, int newsockfd, int nOTs) {
     int i, j, k;
     unsigned char S_pack[PACKBYTES];
     unsigned char Rs_pack[4 * PACKBYTES];
@@ -42,7 +40,7 @@ void baseot_sender(SENDER *sender, int newsockfd) {
 }
 
 
-void baseot_receiver(RECEIVER *receiver, int sockfd) {
+void baseot_receiver(RECEIVER *receiver, int sockfd, int nOTs) {
     int i, j, k;
 
     unsigned char Rs_pack[4 * PACKBYTES];

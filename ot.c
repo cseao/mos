@@ -35,7 +35,7 @@ int sender_main(int port) {
         exit(-1);
     }
     START_TIMEIT();
-    baseot_sender(&sender, newsockfd);
+    baseot_sender(&sender, newsockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
@@ -67,7 +67,7 @@ int receiver_main(const char *host, const int port) {
     }
 
     START_TIMEIT();
-    baseot_receiver(&receiver, sockfd);
+    baseot_receiver(&receiver, sockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
