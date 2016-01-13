@@ -1,6 +1,8 @@
 CC=cc
 
-OBJS= ot.o std.o
+PROTOCOLS= std.o kk.o
+OBJS= ot.o $(PROTOCOLS)
+
 all: ot libot
 
 ot: $(OBJS)

@@ -36,7 +36,7 @@ int sender_main(int port) {
         exit(-1);
     }
     START_TIMEIT();
-    std_sender(&sender, newsockfd, nOTs);
+    kk_sender(&sender, newsockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
@@ -68,7 +68,7 @@ int receiver_main(const char *host, const int port) {
     }
 
     START_TIMEIT();
-    std_receiver(&receiver, sockfd, nOTs);
+    kk_receiver(&receiver, sockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
