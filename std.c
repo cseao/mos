@@ -3,7 +3,7 @@
 
 #include "libot/ot.h"
 
-void std_sender(SENDER *s, int sockfd, int nOTs)
+void std_sender(int sockfd, int nOTs)
 {
   int p[2];
   uint8_t key[2][HASHBYTES];
@@ -12,7 +12,7 @@ void std_sender(SENDER *s, int sockfd, int nOTs)
     perror("Cannot create pipe");
     exit(EXIT_FAILURE);
   }
-  baseot_sender(s, sockfd, nOTs, p[1]);
+  baseot_sender(sockfd, nOTs, p[1]);
 
   for (int i = 0; i < nOTs; i++) {
     printf("%d-th OT: ", i);
@@ -29,7 +29,7 @@ void std_sender(SENDER *s, int sockfd, int nOTs)
   }
 }
 
-void std_receiver(RECEIVER *r, int sockfd, int nOTs)
+void std_receiver(int sockfd, int nOTs)
 {
   int p[2];
   if (pipe(p) == -1) {
@@ -45,7 +45,7 @@ void std_receiver(RECEIVER *r, int sockfd, int nOTs)
   }
 
   uint8_t key[HASHBYTES];
-  baseot_receiver(r, sockfd, nOTs, choices, p[1]);
+  baseot_receiver(sockfd, nOTs, choices, p[1]);
   for (int i = 0; i < nOTs; ++i) {
     reading(p[0], key, HASHBYTES);
     for (int k = 0; k < HASHBYTES; k++) {

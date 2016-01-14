@@ -20,8 +20,6 @@ int sender_main(int port) {
     int rcvbuf = BUFSIZE;
     int reuseaddr = 1;
 
-    SENDER sender;
-
     sockfd = server_listen(port);
     newsockfd = server_accept(sockfd);
 
@@ -36,7 +34,7 @@ int sender_main(int port) {
         exit(-1);
     }
     START_TIMEIT();
-    kk_sender(&sender, newsockfd, nOTs);
+    kk_sender(newsockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
@@ -46,15 +44,10 @@ int sender_main(int port) {
     return 0;
 }
 
-
 int receiver_main(const char *host, const int port) {
     int sockfd;
     int sndbuf = BUFSIZE;
     int flag = 1;
-
-    long long t = 0;
-
-    RECEIVER receiver;
 
     client_connect(&sockfd, host, port);
 
@@ -68,7 +61,7 @@ int receiver_main(const char *host, const int port) {
     }
 
     START_TIMEIT();
-    kk_receiver(&receiver, sockfd, nOTs);
+    kk_receiver(sockfd, nOTs);
     END_TIMEIT();
     printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
 
