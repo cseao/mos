@@ -1,7 +1,7 @@
 CC=cc
 
 PROTOCOLS= std.o kk.o
-OBJS= ot.o $(PROTOCOLS)
+OBJS= ot.o bitmath.o $(PROTOCOLS)
 
 all: ot libot
 
