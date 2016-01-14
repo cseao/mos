@@ -33,21 +33,24 @@ void kk_sender(int sockfd, int nOTs)
     exit(EXIT_FAILURE);
   }
 
-  uint8_t delta[nOTs];
-  randombytes(delta, nOTs);
-  for (int i = 0; i < nOTs; ++i) {
+  /* Perform the base OTs, extends them and place those in a matrix Q. */
+  uint8_t delta[CODEN];
+  randombytes(delta, CODEN);
+  for (int i = 0; i < CODEN; ++i) {
     delta[i] &= 1;
-    printf("choose bit = %d\n", delta[i]);
+  }
+  uint8_t Q[CODEN][m];
+  baseot_receiver(sockfd, CODEN, delta, p[1]);
+  for (int i = 0; i < CODEN; ++i) {
+    reading(p[0], Q[i], HASHBYTES);
+    prg_extend(Q[i], m);
+
   }
 
-
-  uint8_t key[m];
-  baseot_receiver(sockfd, nOTs, delta, p[1]);
-  for (int i = 0; i < nOTs; ++i) {
-    reading(p[0], key, HASHBYTES);
-    prg_extend(key, m);
+  for (int i = 0; i < CODEN; ++i) {
+    printf("choose bit = %d\n", delta[i]);
     for (int k = 0; k < m; k++) {
-      printf("%.2X", key[k]);
+      printf("%.2X", Q[i][k]);
     }
     printf("\n");
   }
@@ -61,22 +64,25 @@ void kk_receiver(int sockfd, int nOTs)
     exit(EXIT_FAILURE);
   }
 
-  uint8_t key[2][m];
+  uint8_t T0[CODEN][m], T1[CODEN][m];
 
-  baseot_sender(sockfd, nOTs, p[1]);
-  for (int i = 0; i < nOTs; i++) {
+  baseot_sender(sockfd, CODEN, p[1]);
+  for (int i = 0; i < CODEN; i++) {
+    reading(p[0], T0[i], HASHBYTES);
+    prg_extend(T0[i], m);
+    reading(p[0], T1[i], HASHBYTES);
+    prg_extend(T1[i], m);
+  }
+
+  for (int i = 0; i < CODEN; ++i) {
     printf("%d-th OT: ", i);
-    reading(p[0], key[0], HASHBYTES);
-    prg_extend(key[0], m);
 
-    reading(p[0], key[1], HASHBYTES);
-    prg_extend(key[1], m);
     for (int k = 0; k < m; k++) {
-      printf("%.2X", key[0][k]);
+      printf("%.2X", T0[i][k]);
     }
     printf(" ");
     for (int k = 0; k < m; k++) {
-      printf("%.2X", key[1][k]);
+      printf("%.2X", T1[i][k]);
     }
     printf("\n");
   }
