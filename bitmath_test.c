@@ -7,20 +7,13 @@
 
 #include "bitmath.h"
 
-void mzero(void *m)
+void setbit(void *_v, size_t pos, bool bit)
 {
-  memset(m, 0, 256 * 256);
+  uint8_t *v = (uint8_t *) _v;
+  v[pos >> 3] |= (bit << (pos % 8));
 }
 
-uint8_t getbit(void *_m, size_t r, size_t i, size_t j)
-{
-
-  uint8_t *m = (uint8_t *) _m;
-  return m[i * r + (j/8)] & (1 << j % 8);
-}
-
-
-int main()
+void test_transpose_identity()
 {
   uint256_t m[256];
 
@@ -32,9 +25,42 @@ int main()
     }
   }
 
-  assert(getbit(m, 256, 0, 0) == 1);
-  assert(getbit(m, 256, 0, 1) == 0);
+  assert(getbit(m, 0) == 1);
+  assert(getbit(m, 1) == 0);
   transpose(m, 1);
-  assert(getbit(m, 256, 0, 0) == 1);
-  assert(getbit(m, 256, 0, 1) == 0);
+  assert(getbit(m, 0) == 1);
+  assert(getbit(m, 1) == 0);
+}
+
+void test_transpose()
+{
+  uint256_t m[256];
+  memset(m, 0, sizeof(m));
+  setbit(m, 1, 1);
+  setbit(m, 2, 1);
+  setbit(m, 3, 1);
+  transpose(m, 1);
+  assert(getbit(m, 0) == 0);
+  assert(getbit(m, 1) == 0);
+  assert(getbit(m, 256*1) == 1);
+  assert(getbit(m, 256*2) == 1);
+}
+
+void test_xor()
+{
+  uint256_t a = {0x0f, 0xff};
+  uint256_t b = {0xf0, 0xff};
+  uint256_t c = {0xff, 0x00};
+  xor(a, b, 1);
+  assert(biteq(a, c, 1));
+}
+
+
+
+int main()
+{
+  test_transpose_identity();
+  test_xor();
+  test_transpose();
+  return 0;
 }

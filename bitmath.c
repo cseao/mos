@@ -1,9 +1,8 @@
-#include <emmintrin.h>
 #include <immintrin.h>
-#include <avxintrin.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "bitmath.h"
 
@@ -20,7 +19,7 @@ void print_matrix(void *_m)
   }
 }
 
-static void naive_transpose256(void *_m, const size_t offset)
+static inline void naive_transpose256(void *_m, const size_t offset)
 {
   uint256_t w;
   uint256_t *m = (uint256_t *) _m;
@@ -39,6 +38,12 @@ static void naive_transpose256(void *_m, const size_t offset)
 }
 
 
+uint8_t getbit(const void *_v, size_t pos)
+{
+  uint8_t *v = (uint8_t *) _v;
+  return v[pos >> 3] & (1 << (pos % 8));
+}
+
 /**
  * Compute in-place transpose of a matrix (N x 256) where N = 256 * n.
  */
@@ -53,12 +58,32 @@ void transpose(void *m, const size_t n)
  * Compute fast bitwise xor between two bit-vectors a, b of size N, where N = 256*n.
  * Places the result in the first one.
  */
-void xor(void *_a, void *_b, size_t n)
+void xor(void *_a, const void *_b, size_t n)
 {
-  __m256d *a = (__m256d *) _a;
-  __m256d *b = (__m256d *) _b;
-  for (size_t i = 0; i < n; i++) {
-    *a = _mm256_xor_pd(*a, *b);
+  __m128i *a = (__m128i *) _a;
+  __m128i *b = (__m128i *) _b;
+  n <<= 1;
+  while (n--) {
+    *a = _mm_xor_si128(*a, *b);
     ++a; ++b;
   }
+}
+
+/**
+ * Compute fast equality between two bit-vectors a, b of size N, where N = 256*n.
+ */
+bool biteq(const void *_a, const void *_b, size_t n)
+{
+  __m128i *a = (__m128i *) _a;
+  __m128i *b = (__m128i *) _b;
+  __m128i iseq;
+  n <<= 1;
+  while (n--) {
+    iseq = _mm_cmpeq_epi8(*a, *b);
+    if (_mm_movemask_epi8(iseq) != 0xffff) {
+      return false;
+    }
+    ++a; ++b;
+  }
+  return true;
 }
