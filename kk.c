@@ -86,7 +86,8 @@ void kk_receiver(int sockfd, int m) {
   const int ms = m + SSEC;
 
   /* note: rows here are columns in the paper. */
-  uint8_t T0[CODEN][ms], T1[CODEN][ms];
+  uint8_t T0[CODEN][ms/8];
+  uint8_t T1[CODEN][ms/8];
   baseot_sender(sockfd, CODEN, p[1]);
   for (int i = 0; i < CODEN; i++) {
     reading(p[0], T0[i], HASHBYTES);
@@ -113,16 +114,11 @@ void kk_receiver(int sockfd, int m) {
     writing(sockfd, u, ms / 8);
   }
 
-  uint8_t c[ms/8];
-  for (size_t i = 0; i < CODEN; i++) {
-    memcpy(c, T0[i], ms/8);
-    bitxor(c, CT[i], ms);
-    for (int k = 0; k < ms/8; k++) {
-      printf("%.2X", T0[i][k]);
-    }
-    printf(" ");
-    for (int k = 0; k < ms/8; k++) {
-      printf("%.2X", c[k]);
+  uint8_t T[ms][CODEN/8];
+  transpose(T, T0, CODEN, ms);
+  for (int j = 0; j < m; j++) {
+    for (int k = 0; k < CODEN/8; ++k) {
+      printf("%.2X", T[j][k]);
     }
     printf("\n");
   }
