@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
 
 #include "bitmath.h"
 
@@ -92,9 +91,7 @@ uint8_t getbit(const void *_v, size_t pos)
 void transpose(void *_A, size_t m, size_t n)
 {
   uint8_t *A = (uint8_t *) _A;
-  uint8_t B[m * n / 8];
-  memcpy(B, A, m * n / 8);
-  sse_trans(B, A, m, n);
+  sse_trans(A, A, m, n);
 }
 
 /**
