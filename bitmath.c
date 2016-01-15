@@ -9,7 +9,7 @@
 
 void print_matrix(void *_m)
 {
-  uint8_t *m = (uint8_t *) _m;
+  uint8_t *m = _m;
   for (int i = 0; i < 32; ++i) {
     for (int j = 0; j < 32; ++j) {
       for (int k = 1; k < 8; k++) {
@@ -17,24 +17,6 @@ void print_matrix(void *_m)
       }
     }
     printf("\n");
-  }
-}
-
-static inline void naive_transpose256(void *_m, const size_t offset)
-{
-  uint256_t w;
-  uint256_t *m = (uint256_t *) _m;
-
-  for (size_t i = 0; i < 256; ++i) {
-    w[0] = m[i + offset][0];
-    w[1] = m[i + offset][1];
-    for (size_t j = 0; j < 256; ++j) {
-      if (j < 128) {
-        m[j + offset][0] |= ((w[0] >> j) & 1) << i;
-      } else {
-        m[j + offset][1] |= ((w[1] >> (128-j)) & 1) << i;
-      }
-    }
   }
 }
 
@@ -81,28 +63,30 @@ sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
 
 uint8_t getbit(const void *_v, size_t pos)
 {
-  uint8_t *v = (uint8_t *) _v;
+  const uint8_t *v = _v;
   return v[pos >> 3] & (1 << (pos % 8));
 }
 
 /**
  * Compute in-place transpose of a matrix of (m x n) bits.
  */
-void transpose(void *_A, size_t m, size_t n)
+void transpose(void *dst, void *src, size_t m, size_t n)
 {
-  uint8_t *A = (uint8_t *) _A;
-  sse_trans(A, A, m, n);
+  uint8_t *A = src;
+  uint8_t *B = dst;
+  sse_trans(B, A, m, n);
 }
 
 /**
- * Compute fast bitwise xor between two bit-vectors a, b of size N, where N = 256*n.
+ * Compute fast bitwise xor between two bit-vectors a, b of n bits,
+ * where n is a multiple of 128.
  * Places the result in the first one.
  */
 void xor(void *_a, const void *_b, size_t n)
 {
   __m128i *a = (__m128i *) _a;
   __m128i *b = (__m128i *) _b;
-  n <<= 1;
+  n >>= 7;
   while (n--) {
     *a = _mm_xor_si128(*a, *b);
     ++a; ++b;
@@ -110,14 +94,15 @@ void xor(void *_a, const void *_b, size_t n)
 }
 
 /**
- * Compute fast equality between two bit-vectors a, b of size N, where N = 256*n.
+ * Compute fast equality between two bit-vectors a, b of n bits,
+ * where n is a multiple of 128.
  */
 bool biteq(const void *_a, const void *_b, size_t n)
 {
   __m128i *a = (__m128i *) _a;
   __m128i *b = (__m128i *) _b;
   __m128i iseq;
-  n <<= 1;
+  n >>= 7;
   while (n--) {
     iseq = _mm_cmpeq_epi8(*a, *b);
     if (_mm_movemask_epi8(iseq) != 0xffff) {

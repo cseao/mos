@@ -23,7 +23,7 @@ void test_transpose_identity()
 
   assert(getbit(m, 0) == 1);
   assert(getbit(m, 1) == 0);
-  transpose(m, 8, 8);
+  transpose(m, m, 8, 8);
   assert(getbit(m, 0) == 1);
   assert(getbit(m, 1) == 0);
 }
@@ -35,7 +35,7 @@ void test_transpose()
   setbit(m, 1, 1);
   setbit(m, 2, 1);
   setbit(m, 3, 1);
-  transpose(m, 256, 256);
+  transpose(m, m, 256, 256);
   assert(getbit(m, 0) == 0);
   assert(getbit(m, 1) == 0);
   assert(getbit(m, 256*1) == 1);
@@ -47,10 +47,20 @@ void test_xor()
   uint256_t a = {0x0f, 0xff};
   uint256_t b = {0xf0, 0xff};
   uint256_t c = {0xff, 0x00};
-  xor(a, b, 1);
-  assert(biteq(a, c, 1));
+  xor(a, b, 256);
+  assert(biteq(a, c, 256));
 }
 
+void test_biteq()
+{
+  uint8_t a[256] = {0};
+  uint8_t *b[256] = {0};
+  memcpy(a, "\xDE\xAD\xBE\xEF", 4);
+  memcpy(b, "\xDE\xAD\x00\x00", 4);
+  assert(!biteq(a, b, 256));
+  memcpy(b, "\xDE\xAD\xBE\xEF", 4);
+  assert(biteq(a, b, 256));
+}
 
 
 int main()
@@ -58,5 +68,6 @@ int main()
   test_transpose_identity();
   test_xor();
   test_transpose();
+  test_biteq();
   return 0;
 }
