@@ -64,31 +64,54 @@ sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
 uint8_t getbit(const void *_v, size_t pos)
 {
   const uint8_t *v = _v;
-  return v[pos >> 3] & (1 << (pos % 8));
+  return (v[pos >> 3] & (1 << (pos % 8))) != 0;
+}
+
+static inline void setbit(void *_v, size_t pos, bool bit)
+{
+  uint8_t *v = _v;
+  v[pos >> 3] |= bit << (pos % 8);
 }
 
 /**
  * Compute in-place transpose of a matrix of (m x n) bits.
  */
-void transpose(void *dst, void *src, size_t m, size_t n)
+void transpose(void *dst, const void *src, size_t m, size_t n)
 {
-  uint8_t *A = src;
+  const uint8_t *A = src;
   uint8_t *B = dst;
-  sse_trans(B, A, m, n);
+  sse_trans(A, B, m, n);
 }
 
 /**
  * Compute fast bitwise xor between two bit-vectors a, b of n bits,
  * where n is a multiple of 128.
- * Places the result in the first one.
+ * Places the result in a.
  */
-void xor(void *_a, const void *_b, size_t n)
+void bitxor(void *_a, const void *_b, size_t n)
 {
   __m128i *a = (__m128i *) _a;
   __m128i *b = (__m128i *) _b;
   n >>= 7;
   while (n--) {
     *a = _mm_xor_si128(*a, *b);
+    ++a; ++b;
+  }
+}
+
+
+/**
+ * Compute fast bitwise and between two bit-vectors a, b of n bits,
+ * where n is a multiple of 128.
+ * Places the result in a.
+ */
+void bitand(void *_a, const void *_b, size_t n)
+{
+  __m128i *a = (__m128i *) _a;
+  __m128i *b = (__m128i *) _b;
+  n >>= 7;
+  while (n--) {
+    *a = _mm_and_si128(*a, *b);
     ++a; ++b;
   }
 }
