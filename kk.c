@@ -1,18 +1,22 @@
 #include <fcntl.h>
+#include <stdint.h>
 #include <unistd.h>
-
+#include <stdio.h>
 #include <blake2.h>
 
+#include "bitmath.h"
 #include "libot/ot.h"
 
 #define CODEN KAPPA*2
 #define CODEK KAPPA
 #define KAPPA 128
+#define SSEC  40
 
-static const int m = 512;
+static const size_t codewordsn = 2;
+static uint8_t codewords[2][CODEN/8] = {{0}};
 
 /**
- * Extends
+ * Extends `out` to `to` bytes in blocks of HASHBYTES.
  */
 void prg_extend(uint8_t *out, size_t to)
 {
@@ -23,66 +27,102 @@ void prg_extend(uint8_t *out, size_t to)
     }
     out += HASHBYTES;
   }
+  blake2(out+HASHBYTES, out, NULL, to % HASHBYTES, HASHBYTES, 0);
 }
 
-void kk_sender(int sockfd, int nOTs)
+void kk_sender(int sockfd, int m)
 {
+  memset(&codewords[1], 0xff, CODEN/8);
   int p[2];
   if (pipe(p) == -1) {
     perror("Cannot create pipe");
     exit(EXIT_FAILURE);
   }
 
+  /* let m' = m + s */
+  const int ms = m + SSEC;
+
   /* Perform the base OTs, extends them and place those in a matrix Q. */
-  uint8_t delta[CODEN];
-  randombytes(delta, CODEN);
+  uint8_t delta[CODEN/8];
+  uint8_t unpacked_delta[CODEN];
+  randombytes(delta, CODEN/8);
   for (int i = 0; i < CODEN; ++i) {
-    delta[i] &= 1;
+    unpacked_delta[i] = getbit(delta, i);
   }
-  uint8_t Q[CODEN][m];
-  baseot_receiver(sockfd, CODEN, delta, p[1]);
+  uint8_t Q[CODEN][ms/8];
+  baseot_receiver(sockfd, CODEN, unpacked_delta, p[1]);
   for (int i = 0; i < CODEN; ++i) {
     reading(p[0], Q[i], HASHBYTES);
-    prg_extend(Q[i], m);
+    prg_extend(Q[i], ms/8);
 
   }
 
+  uint8_t u[ms/8];
   for (int i = 0; i < CODEN; ++i) {
-    printf("choose bit = %d\n", delta[i]);
-    for (int k = 0; k < m; k++) {
+    reading(sockfd, u, ms/8);
+    if (unpacked_delta[i]) {
+      bitxor(Q[i], u, ms/8);
+    }
+  }
+
+  for (size_t i = 0; i < CODEN; ++i) {
+    for (int k = 0; k < ms/8; ++k) {
       printf("%.2X", Q[i][k]);
     }
     printf("\n");
   }
 }
 
-void kk_receiver(int sockfd, int nOTs)
-{
+
+void kk_receiver(int sockfd, int m) {
+  memset(&codewords[1], 0xff, CODEN/8);
   int p[2];
   if (pipe(p) == -1) {
     perror("Cannot create pipe");
     exit(EXIT_FAILURE);
   }
 
-  uint8_t T0[CODEN][m], T1[CODEN][m];
+  /* let m' = m + s. */
+  const int ms = m + SSEC;
 
+  /* note: rows here are columns in the paper. */
+  uint8_t T0[CODEN][ms], T1[CODEN][ms];
   baseot_sender(sockfd, CODEN, p[1]);
   for (int i = 0; i < CODEN; i++) {
     reading(p[0], T0[i], HASHBYTES);
-    prg_extend(T0[i], m);
+    prg_extend(T0[i], ms/8);
     reading(p[0], T1[i], HASHBYTES);
-    prg_extend(T1[i], m);
+    prg_extend(T1[i], ms/8);
   }
 
-  for (int i = 0; i < CODEN; ++i) {
-    printf("%d-th OT: ", i);
+  uint8_t C[ms][CODEN/8];
+  uint8_t choices[ms];
+  randombytes(choices, ms);
+  for (int i = 0; i < ms; ++i) {
+    choices[i] &= 1;
+    memcpy(C[i], codewords + choices[i], sizeof(*codewords));
+  }
 
-    for (int k = 0; k < m; k++) {
+  uint8_t CT[CODEN][ms/8];
+  transpose(CT, C, ms, CODEN);
+  uint8_t u[ms/8];
+  for (int i = 0; i < CODEN; ++i) {
+    memcpy(u, CT[i], ms/8);
+    bitxor(u, T0[i], ms);
+    bitxor(u, T1[i], ms);
+    writing(sockfd, u, ms / 8);
+  }
+
+  uint8_t c[ms/8];
+  for (size_t i = 0; i < CODEN; i++) {
+    memcpy(c, T0[i], ms/8);
+    bitxor(c, CT[i], ms);
+    for (int k = 0; k < ms/8; k++) {
       printf("%.2X", T0[i][k]);
     }
     printf(" ");
-    for (int k = 0; k < m; k++) {
-      printf("%.2X", T1[i][k]);
+    for (int k = 0; k < ms/8; k++) {
+      printf("%.2X", c[k]);
     }
     printf("\n");
   }
