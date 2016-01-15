@@ -15,19 +15,15 @@ void setbit(void *_v, size_t pos, bool bit)
 
 void test_transpose_identity()
 {
-  uint256_t m[256];
+  uint8_t m[8];
 
-  for (size_t i=0; i != 256; ++i) {
-    if (i < 128) {
-      m[i][0] |= 1 << i;
-    } else {
-      m[i][1] |= 1 << (128-i);
-    }
+  for (size_t i=0; i != 8; ++i) {
+    setbit(m, i*8 + i, 1);
   }
 
   assert(getbit(m, 0) == 1);
   assert(getbit(m, 1) == 0);
-  transpose(m, 1);
+  transpose(m, 8, 8);
   assert(getbit(m, 0) == 1);
   assert(getbit(m, 1) == 0);
 }
@@ -39,7 +35,7 @@ void test_transpose()
   setbit(m, 1, 1);
   setbit(m, 2, 1);
   setbit(m, 3, 1);
-  transpose(m, 1);
+  transpose(m, 256, 256);
   assert(getbit(m, 0) == 0);
   assert(getbit(m, 1) == 0);
   assert(getbit(m, 256*1) == 1);
