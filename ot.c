@@ -8,7 +8,7 @@
 #include "libot/ot.h"
 #include "otext.h"
 
-static long nOTs = (1 << 10) - 40;
+static size_t nOTs = (1 << 15) - 40;
 
 #define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()
 #define END_TIMEIT()   __t += cpucycles_amd64cpuinfo()
