@@ -53,6 +53,19 @@ void test_transpose()
     }
   }
 
+  size_t Crows = 1 << 10;
+  size_t Ccols = 256;
+  uint8_t C[Crows][Ccols/8];
+  uint8_t CT[Ccols][Crows/8];
+  for (size_t i = 0; i < Crows; ++i) {
+    read(r, C[i], Ccols/8);
+  }
+  transpose(CT, C, Crows, Ccols);
+  for (size_t i = 0; i < Crows; i++) {
+    for (size_t j = 0; j < Ccols; j++) {
+      assert(getbit(C, i * Ccols + j) == getbit(CT, j * Crows + i));
+    }
+  }
   /* for (size_t i = 0; i < 8; i++) { */
   /*   printf("%.2X\t%.2X\n", A[i], B[i]); */
   /* } */

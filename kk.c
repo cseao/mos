@@ -54,25 +54,31 @@ void kk_sender(int sockfd, int m)
   for (int i = 0; i < CODEN; ++i) {
     reading(p[0], Q[i], HASHBYTES);
     prg_extend(Q[i], ms/8);
-
   }
 
   uint8_t u[ms/8];
   for (int i = 0; i < CODEN; ++i) {
     reading(sockfd, u, ms/8);
     if (unpacked_delta[i]) {
-      bitxor(Q[i], u, ms/8);
+      bitxor(Q[i], u, ms);
     }
   }
 
-  for (size_t i = 0; i < CODEN; ++i) {
-    for (int k = 0; k < ms/8; ++k) {
-      printf("%.2X", Q[i][k]);
+  uint8_t QT[ms][CODEN/8];
+  transpose(QT, Q, CODEN, ms);
+  uint8_t q[CODEN/8];
+
+  for (int j = 0; j < ms; ++j) {
+    for (size_t i = 0; i < codewordsn; i++) {
+      memcpy(q, delta, CODEN/8);
+      bitand(q, codewords[i], CODEN);
+      bitxor(q, QT[j], CODEN);
+      Bprint(q, CODEN/8);
+      printf("\t");
     }
     printf("\n");
   }
 }
-
 
 void kk_receiver(int sockfd, int m) {
   memset(&codewords[1], 0xff, CODEN/8);
@@ -116,10 +122,9 @@ void kk_receiver(int sockfd, int m) {
 
   uint8_t T[ms][CODEN/8];
   transpose(T, T0, CODEN, ms);
-  for (int j = 0; j < m; j++) {
-    for (int k = 0; k < CODEN/8; ++k) {
-      printf("%.2X", T[j][k]);
-    }
+
+  for (int j = 0; j < ms; j++) {
+    Bprint(T[j], CODEN/8);
     printf("\n");
   }
 }

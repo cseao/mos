@@ -7,16 +7,10 @@
 
 #include "bitmath.h"
 
-void print_matrix(void *_m)
+void Bprint(const uint8_t *v, size_t n)
 {
-  uint8_t *m = _m;
-  for (int i = 0; i < 32; ++i) {
-    for (int j = 0; j < 32; ++j) {
-      for (int k = 1; k < 8; k++) {
-        printf("%d ", (m[i * 32 + j] & (1<<k)) != 0);
-      }
-    }
-    printf("\n");
+  for (size_t i = 0; i < n; ++i) {
+    printf("%.2X", v[i]);
   }
 }
 
