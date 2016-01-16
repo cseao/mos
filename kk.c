@@ -13,7 +13,10 @@
 #define SSEC  40
 
 static const size_t codewordsn = 2;
-static uint8_t codewords[2][CODEN/8] = {{0}};
+static uint8_t codewords[2][CODEN/8] = {
+  {[0 ... 31] = '\x00'},
+  {[0 ... 31] = '\xff'}
+};
 
 /**
  * Extends `out` to `to` bytes in blocks of HASHBYTES.
@@ -41,7 +44,6 @@ void hash(uint8_t *out, uint8_t *in, int j)
 
 void kk_sender(int sockfd, int m)
 {
-  memset(&codewords[1], 0xff, CODEN/8);
   int p[2];
   if (pipe(p) == -1) {
     perror("Cannot create pipe");
@@ -91,7 +93,6 @@ void kk_sender(int sockfd, int m)
 }
 
 void kk_receiver(int sockfd, int m) {
-  memset(&codewords[1], 0xff, CODEN/8);
   int p[2];
   if (pipe(p) == -1) {
     perror("Cannot create pipe");
