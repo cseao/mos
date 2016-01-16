@@ -13,7 +13,7 @@
  * - nOTs is the number of OTs to be performed
  * - outfd is the file descriptor for writing the choices as soon as they come out.
  *   Results are in the form {(x_0, x_1)}_j.
- *  The OT length is HASHBYTES.
+ * The OT length is KAPPA.
  */
 void baseot_sender(int newsockfd, int nOTs, int outfd) {
     int i, j;
@@ -31,8 +31,8 @@ void baseot_sender(int newsockfd, int nOTs, int outfd) {
         sender_keygen(&sender, Rs_pack, keys[0], keys[1]);
 
         for (j = 0; j < 4; j++) {
-          writing(outfd, keys[0][j], HASHBYTES);
-          writing(outfd, keys[1][j], HASHBYTES);
+          writing(outfd, keys[0][j], KAPPA/8);
+          writing(outfd, keys[1][j], KAPPA/8);
         }
     }
 }
@@ -43,8 +43,7 @@ void baseot_sender(int newsockfd, int nOTs, int outfd) {
  * - nOTs is the number of OTs to be performed.
  * - choices is a vector of nOTs bytes where each choice is identified by 1/0.
  * - outfd in the file descriptor for writing the results as soon as they come out.
- *
- * The OT length is HASHBYTES.
+ * The OT length is KAPPA.
  */
 void baseot_receiver(int sockfd, int nOTs, uint8_t *choices, int outfd) {
     int i, j;
@@ -65,7 +64,7 @@ void baseot_receiver(int sockfd, int nOTs, uint8_t *choices, int outfd) {
         receiver_keygen(&receiver, keys);
         choices += 4;
         for (j = 0; j < 4; j++) {
-          writing(outfd, keys[j], HASHBYTES);
+          writing(outfd, keys[j], KAPPA/8);
         }
     }
 }

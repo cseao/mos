@@ -3,14 +3,14 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "libot/ot.h"
 #include "oracle.h"
 #include "bitmath.h"
+#include "libot/ot.h"
 
 #define CODEN KAPPA*2
 #define CODEK KAPPA
-#define KAPPA 128
 #define SSEC  40
+
 
 static const size_t codewordsn = 2;
 static uint8_t codewords[2][CODEN/8] = {
@@ -40,7 +40,7 @@ void kk_sender(int sockfd, size_t m)
   baseot_receiver(sockfd, CODEN, unpacked_delta, p[1]);
   uint8_t Q[CODEN][ms/8];
   for (size_t i = 0; i < CODEN; ++i) {
-    reading(p[0], Q[i], HASHBYTES);
+    reading(p[0], Q[i], KAPPA/8);
     prg_extend(Q[i], ms/8);
   }
 
@@ -83,9 +83,9 @@ void kk_receiver(int sockfd, size_t m) {
   uint8_t T0[CODEN][ms/8];
   uint8_t T1[CODEN][ms/8];
   for (int i = 0; i < CODEN; i++) {
-    reading(p[0], T0[i], HASHBYTES);
+    reading(p[0], T0[i], KAPPA/8);
     prg_extend(T0[i], ms/8);
-    reading(p[0], T1[i], HASHBYTES);
+    reading(p[0], T1[i], KAPPA/8);
     prg_extend(T1[i], ms/8);
   }
 
