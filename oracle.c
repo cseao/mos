@@ -7,15 +7,16 @@
  */
 void prg_extend(uint8_t *out, size_t to)
 {
-  blake2(out, out, NULL, HASHBYTES, KAPPA/8, 0);
-  for (int times = to / HASHBYTES - 1; times > 0; times--) {
-    if (blake2(out+HASHBYTES, out, NULL, HASHBYTES, HASHBYTES, 0) == -1) {
+#define STEPH BLAKE2B_OUTBYTES
+  blake2(out, out, NULL, STEPH, KAPPA/8, 0);
+  for (int times = to / STEPH - 1; times > 0; times--) {
+    if (blake2(out+STEPH, out, NULL, STEPH, STEPH, 0) == -1) {
       perror("Cannot hash");
       exit(EXIT_FAILURE);
     }
-    out += HASHBYTES;
+    out += STEPH;
   }
-  blake2(out+HASHBYTES, out, NULL, to % HASHBYTES, HASHBYTES, 0);
+  blake2(out+STEPH, out, NULL, to % STEPH, STEPH, 0);
 }
 
 void hash(uint8_t *out, uint8_t *in, const size_t j, const size_t inlen)
