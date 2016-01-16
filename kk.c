@@ -30,6 +30,15 @@ void prg_extend(uint8_t *out, size_t to)
   blake2(out+HASHBYTES, out, NULL, to % HASHBYTES, HASHBYTES, 0);
 }
 
+void hash(uint8_t *out, uint8_t *in, int j)
+{
+  uint8_t inj[CODEN/8 + sizeof(int)];
+  memcpy(inj, &j, sizeof(int));
+  memcpy(inj + sizeof(int), in, CODEN/8);
+
+  blake2(out, inj, NULL, KAPPA/8, CODEN/8 + sizeof(int), 0);
+}
+
 void kk_sender(int sockfd, int m)
 {
   memset(&codewords[1], 0xff, CODEN/8);
@@ -73,7 +82,8 @@ void kk_sender(int sockfd, int m)
       memcpy(q, delta, CODEN/8);
       bitand(q, codewords[i], CODEN);
       bitxor(q, QT[j], CODEN);
-      Bprint(q, CODEN/8);
+      hash(q, q, j);
+      Bprint(q, KAPPA/8);
       printf("\t");
     }
     printf("\n");
@@ -121,10 +131,11 @@ void kk_receiver(int sockfd, int m) {
   }
 
   uint8_t T[ms][CODEN/8];
+  uint8_t pad[KAPPA/8];
   transpose(T, T0, CODEN, ms);
-
   for (int j = 0; j < ms; j++) {
-    Bprint(T[j], CODEN/8);
+    hash(pad, T[j], j);
+    Bprint(pad, KAPPA/8);
     printf("\n");
   }
 }
