@@ -1,7 +1,8 @@
-CC=cc -mavx -O3 -mprefer-avx128
+CC=gcc
+CFLAGS?=-mavx -O3 -mprefer-avx128 -Wall -Wextra -Werror -fstack-check -funroll-loops -pg -g
 
 PROTOCOLS= std.o kk.o
-OBJS= ot.o bitmath.o $(PROTOCOLS)
+OBJS= ot.o bitmath.o oracle.o $(PROTOCOLS)
 
 all: ot
 
@@ -15,7 +16,7 @@ test: bitmath_test
 
 clean:
 	-rm -f *.o ot
-	-$(MAKE) clean -C libot/
+#	-$(MAKE) clean -C libot/
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<

@@ -2,10 +2,10 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <blake2.h>
 
-#include "bitmath.h"
 #include "libot/ot.h"
+#include "oracle.h"
+#include "bitmath.h"
 
 #define CODEN KAPPA*2
 #define CODEK KAPPA
@@ -111,7 +111,7 @@ void kk_receiver(int sockfd, size_t m) {
   uint8_t pad[KAPPA/8];
   transpose(T, T0, CODEN, ms);
   for (size_t j = 0; j < ms; j++) {
-    hash(pad, T[j], j);
+    hash(pad, T[j], j, CODEN/8, KAPPA/8);
     Bprint(pad, KAPPA/8);
     printf("\n");
   }
