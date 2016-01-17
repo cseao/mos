@@ -21,9 +21,10 @@ void prg_extend(uint8_t *out, size_t to)
 
 void hash(uint8_t *out, uint8_t *in, const size_t j, const size_t inlen)
 {
-  uint8_t inj[inlen + sizeof(size_t)];
-  memcpy(inj, &j, sizeof(size_t));
-  memcpy(inj + sizeof(size_t), in, inlen);
+  static const int jsize = sizeof(size_t);
+  uint8_t inj[inlen + jsize];
+  memcpy(inj, &j, jsize);
+  memcpy(inj + jsize, in, inlen);
 
-  blake2(out, inj, NULL, KAPPA/8, inlen + sizeof(int), 0);
+  blake2(out, inj, NULL, KAPPA/8, inlen + jsize, 0);
 }
