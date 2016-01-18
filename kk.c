@@ -84,7 +84,7 @@ void kk_receiver(int sockfd, size_t m) {
   baseot_sender(sockfd, CODEN, p[1]);
   uint8_t (*T0)[ms/8] = malloc(CODEN * sizeof(*T0));
   uint8_t (*T1)[ms/8] = malloc(CODEN * sizeof(*T0));
-  for (int i = 0; i < CODEN; i++) {
+  for (size_t i = 0; i < CODEN; i++) {
     reading(p[0], T0[i], KAPPA/8);
     prg_extend(T0[i], ms/8);
     reading(p[0], T1[i], KAPPA/8);
