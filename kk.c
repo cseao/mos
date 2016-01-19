@@ -12,8 +12,8 @@
 #define CODEK KAPPA
 #define SSEC  40
 
-static const size_t codewordsm = 1;
-static const size_t codewordsn = 2;
+size_t codewordsm = 1;
+size_t codewordsn = 2;
 static uint8_t codewords[WORDS][CODEN/8] = {
 #include "wh.txt"
 };

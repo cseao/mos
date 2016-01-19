@@ -9,6 +9,8 @@
 #include "otext.h"
 
 static size_t nOTs = (1 << 15) - 40;
+extern size_t codewordsm;
+extern size_t codewordsn;
 
 #define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()
 #define END_TIMEIT()   __t += cpucycles_amd64cpuinfo()
@@ -70,13 +72,14 @@ int receiver_main(const char *host, const int port) {
     return 0;
 }
 
-static const char* short_options = "hH:p:n:";
+static const char* short_options = "hH:p:m:n:";
 
 static const struct option long_options[] = {
   {"help", no_argument, 0, 'h'},
   {"host", required_argument, 0, 'H'},
   {"port", required_argument, 0, 'p'},
-  {"nots", required_argument, 0, 'n'},
+  {"nots", required_argument, 0, 'm'},
+  {"out-of", required_argument, 0, 'n'},
   {0, 0, 0, 0}
 };
 
@@ -87,9 +90,10 @@ const char help_message[] =
 "\n"
 "Options:\n"
 "-h --help                      Shows this screen.\n"
-"-n INT                         Number of OTs [default: 1e6].\n"
+"-m INT                         Number of OTs [default: 1e6].\n"
 "-H HOST, --host HOST           IP-address [default: localhost].\n"
 "-p INT, --port INT             IP-port [default: 7766].\n"
+"-n INT, --out-of INT           Do 1-out-of-n oblivious transfer\n"
 "";
 
 const char usage_pattern[] =
@@ -118,7 +122,8 @@ int main(int argc, char **argv)
   int option_index;
   while ((opt=getopt_long(argc, argv,
                           short_options, long_options,
-                          &option_index)) != -1)
+                          &option_index)) != -1) {
+    /* XXX. we are not really sanitizing the input */
     switch (opt) {
     case 'h':
       fputs(help_message, stdout);
@@ -130,13 +135,19 @@ int main(int argc, char **argv)
     case 'p':
       port = atoi(optarg);
       break;
-    case 'n':
+    case 'm':
       nOTs = atol(optarg);
+      break;
+    case 'n':
+      /* XXX. here we assume the input will be of the form 2^{optarg} */
+      codewordsm = atoi(optarg) - 1;
+      codewordsn = atoi(optarg);
       break;
     case '?':
     default:
       usage();
     }
+  }
 
   if (!strcmp("sender", role))  {
     sender_main(port);
