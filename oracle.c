@@ -8,6 +8,11 @@
 void prg_extend(uint8_t *out, size_t to)
 {
 #define STEPH BLAKE2B_OUTBYTES
+
+  if (to < STEPH) {
+      blake2(out, out, NULL, to, KAPPA/8, 0);
+      return;
+  }
   blake2(out, out, NULL, STEPH, KAPPA/8, 0);
   for (int times = to / STEPH - 1; times > 0; times--) {
     if (blake2(out+STEPH, out, NULL, STEPH, STEPH, 0) == -1) {

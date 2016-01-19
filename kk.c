@@ -27,7 +27,8 @@ void kk_sender(int sockfd, size_t m)
     exit(EXIT_FAILURE);
   }
   /* let m' = m + s */
-  const size_t ms = m + SSEC;
+  size_t ms = (m + SSEC);
+  ms -= (ms % 128);
 
   /* Perform the base OTs, extends them and place those in a matrix Q. */
   uint8_t delta[CODEN/8];
@@ -78,7 +79,8 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   /* let m' = m + s. */
-  const size_t ms = m + SSEC;
+  size_t ms = m + SSEC;
+  ms -= (ms % 128);
 
   /* note: rows here are columns in the paper. */
   baseot_sender(sockfd, CODEN, p[1]);
@@ -101,7 +103,7 @@ void kk_receiver(int sockfd, size_t m) {
 
   uint8_t (*CT)[ms/8] = C;
   transpose(CT, C, ms, CODEN);
-  uint8_t *u = malloc(ms/8 * sizeof(*choices));
+  uint8_t *u = malloc(ms/8 * sizeof(*u));
   for (size_t i = 0; i < CODEN; ++i) {
     memcpy(u, CT[i], ms/8);
     bitxor(u, T0[i], ms);
