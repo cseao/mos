@@ -13,7 +13,7 @@
 #define CODEN KAPPA*2
 #define CODEK KAPPA
 
-static const bool active_security = true;
+bool active_security = false;
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
 static uint8_t codewords[WORDS][CODEN/8] = {

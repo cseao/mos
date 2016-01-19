@@ -11,6 +11,7 @@
 static size_t nOTs = 1 << 10;
 extern uint8_t codewordsm;
 extern size_t codewordsn;
+extern bool active_security;
 
 #define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()
 #define END_TIMEIT()   __t += cpucycles_amd64cpuinfo()
@@ -72,7 +73,7 @@ int receiver_main(const char *host, const int port) {
     return 0;
 }
 
-static const char* short_options = "hH:p:m:n:";
+static const char* short_options = "hH:p:m:n:a";
 
 static const struct option long_options[] = {
   {"help", no_argument, 0, 'h'},
@@ -80,6 +81,7 @@ static const struct option long_options[] = {
   {"port", required_argument, 0, 'p'},
   {"nots", required_argument, 0, 'm'},
   {"out-of", required_argument, 0, 'n'},
+  {"active", no_argument, 0, 'a'},
   {0, 0, 0, 0}
 };
 
@@ -94,6 +96,7 @@ const char help_message[] =
 "-H HOST, --host HOST           IP-address [default: localhost].\n"
 "-p INT, --port INT             IP-port [default: 7766].\n"
 "-n INT, --out-of INT           Do 1-out-of-n oblivious transfer\n"
+"-a, --active                   Perform active-security checks.\n"
 "";
 
 const char usage_pattern[] =
@@ -142,6 +145,9 @@ int main(int argc, char **argv)
       /* XXX. here we assume the input will be of the form 2^{optarg} */
       codewordsm = atoi(optarg) - 1;
       codewordsn = atoi(optarg);
+      break;
+    case 'a':
+      active_security = true;
       break;
     case '?':
     default:
