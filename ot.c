@@ -16,6 +16,7 @@ extern bool active_security;
 #define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()
 #define END_TIMEIT()   __t += cpucycles_amd64cpuinfo()
 #define GET_TIMEIT()   __t
+#define TIMEIT_FORMAT "%lld"
 
 int sender_main(int port) {
     int sockfd;
@@ -39,7 +40,7 @@ int sender_main(int port) {
     START_TIMEIT();
     kk_sender(newsockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
+    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " cycles\n", nOTs, GET_TIMEIT());
 
     shutdown(newsockfd, 2);
     shutdown(sockfd, 2);
@@ -66,7 +67,7 @@ int receiver_main(const char *host, const int port) {
     START_TIMEIT();
     kk_receiver(sockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time:  %lld cycles\n", nOTs, GET_TIMEIT());
+    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " cycles\n", nOTs, GET_TIMEIT());
 
     shutdown(sockfd, 2);
 
