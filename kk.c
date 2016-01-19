@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 #include "oracle.h"
+#include "otext.h"
 #include "bitmath.h"
 #include "libot/ot.h"
 
 #define WORDS KAPPA*2
 #define CODEN KAPPA*2
 #define CODEK KAPPA
-#define SSEC  128
 
 static const bool active_security = true;
 uint8_t codewordsm = 1;
@@ -65,7 +65,6 @@ void kk_sender(int sockfd, size_t m)
   }
   /* let m' = m + s */
   size_t ms = (m + SSEC);
-  ms -= (ms % 128);
 
   /* Perform the base OTs, extends them and place those in a matrix Q. */
   uint8_t delta[CODEN/8];
@@ -147,8 +146,6 @@ void kk_receiver(int sockfd, size_t m) {
 
   /* let m' = m + s. */
   size_t ms = m + SSEC;
-  /* enforce ms to be a multiple of 128, */
-  // ms -= (ms % 128);
 
   /* note: rows here are columns in the paper. */
   baseot_sender(sockfd, CODEN, p[1]);

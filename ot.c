@@ -8,7 +8,7 @@
 #include "libot/ot.h"
 #include "otext.h"
 
-static size_t nOTs = (1 << 10);
+static size_t nOTs = 1 << 10;
 extern uint8_t codewordsm;
 extern size_t codewordsn;
 
@@ -148,6 +148,12 @@ int main(int argc, char **argv)
       usage();
     }
   }
+
+  /*
+   * Our internal arithmetic functions assume that the input can always be
+   * splitted in branches of 128 bits, so here we get to the nearest multiple.
+   */
+  nOTs -= (nOTs + SSEC) % 128;
 
   if (!strcmp("sender", role))  {
     sender_main(port);
