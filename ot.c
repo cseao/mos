@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/time.h>
 
 #include "libot/ot.h"
 #include "otext.h"
@@ -13,10 +14,12 @@ extern uint8_t codewordsm;
 extern size_t codewordsn;
 extern bool active_security;
 
-#define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()
-#define END_TIMEIT()   __t += cpucycles_amd64cpuinfo()
-#define GET_TIMEIT()   __t
-#define TIMEIT_FORMAT "%lld"
+#define START_TIMEIT() struct timeval __start, __end; gettimeofday(&__start, NULL)
+#define END_TIMEIT()   \
+  gettimeofday(&__end, NULL); \
+  long int __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
+#define GET_TIMEIT()   __sdiff - (__udiff < 0 ? 1 : 0), __udiff + (__udiff < 0 ? 1000000 : 0)
+#define TIMEIT_FORMAT "%ld.%ld"
 
 int sender_main(int port) {
     int sockfd;
@@ -40,7 +43,7 @@ int sender_main(int port) {
     START_TIMEIT();
     kk_sender(newsockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " cycles\n", nOTs, GET_TIMEIT());
+    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     shutdown(newsockfd, 2);
     shutdown(sockfd, 2);
@@ -67,7 +70,7 @@ int receiver_main(const char *host, const int port) {
     START_TIMEIT();
     kk_receiver(sockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " cycles\n", nOTs, GET_TIMEIT());
+    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     shutdown(sockfd, 2);
 
