@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <stddef.h>
 #include <stdio.h>
 
 #include "oracle.h"
@@ -10,14 +11,50 @@
 #define WORDS KAPPA*2
 #define CODEN KAPPA*2
 #define CODEK KAPPA
-#define SSEC  40
+#define SSEC  128
 
+static const bool active_security = true;
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
 static uint8_t codewords[WORDS][CODEN/8] = {
 #include "wh.txt"
 };
 
+static void
+sender_check(const int sockfd, const uint8_t delta[CODEN/8], const uint8_t (*QT)[CODEN/8], const size_t m)
+{
+  uint8_t mu[SSEC][m/8];
+  uint8_t q_i[CODEN/8];
+  uint8_t t_i[CODEN/8];
+  uint8_t c_i[CODEN/8];
+  uint8_t w_i;
+  for (size_t i = 0; i < SSEC; ++i) {
+    randombytes(mu[i], KAPPA/8);
+    writing(sockfd, mu[i], KAPPA/8);
+    prg_extend(mu[i], m/8);
+
+    reading(sockfd, t_i, CODEN/8);
+    reading(sockfd, &w_i, 1);
+    if (w_i & ~codewordsm) {
+      fprintf(stderr, "Check Failed!\n");
+      exit(EXIT_FAILURE);
+    }
+    memcpy(q_i, QT[m + i], CODEN/8);
+    memcpy(c_i, codewords[w_i], CODEN/8);
+    for (size_t j = 0; j < m; j++) {
+      if (getbit(mu[i], j)) {
+          bitxor(q_i, QT[j], CODEN);
+      }
+    }
+    bitxor(q_i, t_i, CODEN);
+    bitand(c_i, delta, CODEN);
+    if (!biteq(c_i, q_i, CODEN)) {
+      fprintf(stderr, "Check failed!\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+}
 
 void kk_sender(int sockfd, size_t m)
 {
@@ -55,6 +92,10 @@ void kk_sender(int sockfd, size_t m)
 
   uint8_t (*QT)[CODEN/8] = malloc(ms * sizeof(*QT));
   transpose(QT, Q, CODEN, ms);
+
+  if (active_security) {
+    sender_check(sockfd, delta, QT, m);
+  }
   uint8_t q[CODEN/8];
   for (size_t j = 0; j < ms; ++j) {
     for (size_t i = 0; i < codewordsn; i++) {
@@ -72,6 +113,31 @@ void kk_sender(int sockfd, size_t m)
   free(u);
 }
 
+
+static void
+receiver_check(const int sockfd, const uint8_t *choices, const uint8_t (*T)[CODEN/8], const size_t m)
+{
+  uint8_t mu[SSEC][m/8];
+  uint8_t w_i;
+  uint8_t t_i[CODEN/8];
+
+  for (size_t i = 0; i < SSEC; ++i) {
+    reading(sockfd, mu[i], KAPPA/8);
+    prg_extend(mu[i], m/8);
+
+    memcpy(t_i, T[m + i], CODEN/8);
+    w_i = choices[m + i];
+    for (size_t j = 0; j < m; ++j) {
+      if (getbit(mu[i], j)) {
+        w_i ^= choices[j];
+        bitxor(t_i, T[j], CODEN);
+      }
+    }
+    writing(sockfd, t_i, CODEN/8);
+    writing(sockfd, &w_i, 1);
+  }
+}
+
 void kk_receiver(int sockfd, size_t m) {
   int p[2];
   if (pipe(p) == -1) {
@@ -81,7 +147,8 @@ void kk_receiver(int sockfd, size_t m) {
 
   /* let m' = m + s. */
   size_t ms = m + SSEC;
-  ms -= (ms % 128);
+  /* enforce ms to be a multiple of 128, */
+  // ms -= (ms % 128);
 
   /* note: rows here are columns in the paper. */
   baseot_sender(sockfd, CODEN, p[1]);
@@ -113,12 +180,17 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   uint8_t (*T)[CODEN/8] = malloc(ms * sizeof(*T));
-  uint8_t pad[KAPPA/8];
   transpose(T, T0, CODEN, ms);
+
+  if (active_security) {
+    receiver_check(sockfd, choices, T, m);
+  }
+
+  uint8_t pad[KAPPA/8];
   for (size_t j = 0; j < ms; j++) {
     hash(pad, T[j], j, CODEN/8, KAPPA/8);
-    // Bprint(pad, KAPPA/8);
-    // printf("\n");
+    Bprint(pad, KAPPA/8);
+    printf("\n");
   }
 
   free(T0);

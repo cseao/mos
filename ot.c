@@ -8,7 +8,7 @@
 #include "libot/ot.h"
 #include "otext.h"
 
-static size_t nOTs = (1 << 15) - 40;
+static size_t nOTs = (1 << 10);
 extern uint8_t codewordsm;
 extern size_t codewordsn;
 
