@@ -7,15 +7,15 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
+#define WORDS KAPPA*2
 #define CODEN KAPPA*2
 #define CODEK KAPPA
 #define SSEC  40
 
 static const size_t codewordsm = 1;
 static const size_t codewordsn = 2;
-static uint8_t codewords[2][CODEN/8] = {
-  {[0 ... 31] = '\x00'},
-  {[0 ... 31] = '\xff'}
+static uint8_t codewords[WORDS][CODEN/8] = {
+#include "wh.txt"
 };
 
 
