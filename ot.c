@@ -9,7 +9,7 @@
 #include "otext.h"
 
 static size_t nOTs = (1 << 15) - 40;
-extern size_t codewordsm;
+extern uint8_t codewordsm;
 extern size_t codewordsn;
 
 #define START_TIMEIT() long long __t = 0; __t -= cpucycles_amd64cpuinfo()

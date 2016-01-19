@@ -12,7 +12,7 @@
 #define CODEK KAPPA
 #define SSEC  40
 
-size_t codewordsm = 1;
+uint8_t codewordsm = 1;
 size_t codewordsn = 2;
 static uint8_t codewords[WORDS][CODEN/8] = {
 #include "wh.txt"
