@@ -11,7 +11,7 @@
 #define CODEK KAPPA
 #define SSEC  40
 
-
+static const size_t codewordsm = 1;
 static const size_t codewordsn = 2;
 static uint8_t codewords[2][CODEN/8] = {
   {[0 ... 31] = '\x00'},
@@ -97,7 +97,7 @@ void kk_receiver(int sockfd, size_t m) {
   uint8_t *choices = malloc(ms * sizeof(*choices));
   randombytes(choices, ms);
   for (size_t i = 0; i < ms; ++i) {
-    choices[i] &= 1;
+    choices[i] &= codewordsm;
     memcpy(C[i], codewords + choices[i], sizeof(*codewords));
   }
 
