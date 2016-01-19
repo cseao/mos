@@ -1,5 +1,5 @@
-CC=gcc
-CFLAGS?=-mavx -O3 -mprefer-avx128 -Wall -Wextra -Werror -fstack-check -funroll-loops -pg -g
+CC?=cc
+CFLAGS?=-mavx -O3 -Wall -Wextra -Werror -pedantic -funroll-loops
 
 PROTOCOLS= std.o kk.o
 OBJS= ot.o bitmath.o oracle.o $(PROTOCOLS)
