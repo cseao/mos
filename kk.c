@@ -53,7 +53,7 @@ void kk_sender(int sockfd, size_t m)
     }
   }
 
-  uint8_t (*QT)[CODEN/8] = Q;
+  uint8_t (*QT)[CODEN/8] = malloc(ms * sizeof(*QT));
   transpose(QT, Q, CODEN, ms);
   uint8_t q[CODEN/8];
   for (size_t j = 0; j < ms; ++j) {
@@ -68,6 +68,7 @@ void kk_sender(int sockfd, size_t m)
     // printf("\n");
   }
   free(Q);
+  free(QT);
   free(u);
 }
 
@@ -101,7 +102,7 @@ void kk_receiver(int sockfd, size_t m) {
     memcpy(C[i], codewords + choices[i], sizeof(*codewords));
   }
 
-  uint8_t (*CT)[ms/8] = C;
+  uint8_t (*CT)[ms/8] = malloc(CODEN * sizeof(*CT));
   transpose(CT, C, ms, CODEN);
   uint8_t *u = malloc(ms/8 * sizeof(*u));
   for (size_t i = 0; i < CODEN; ++i) {
@@ -111,7 +112,7 @@ void kk_receiver(int sockfd, size_t m) {
     writing(sockfd, u, ms / 8);
   }
 
-  uint8_t (*T)[CODEN/8] = T0;
+  uint8_t (*T)[CODEN/8] = malloc(ms * sizeof(*T));
   uint8_t pad[KAPPA/8];
   transpose(T, T0, CODEN, ms);
   for (size_t j = 0; j < ms; j++) {
@@ -124,5 +125,7 @@ void kk_receiver(int sockfd, size_t m) {
   free(T1);
   free(C);
   free(choices);
+  free(CT);
   free(u);
+  free(T);
 }
