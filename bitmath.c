@@ -63,12 +63,6 @@ uint8_t getbit(const void *_v, size_t pos)
   return (v[pos >> 3] & (1 << (pos % 8))) != 0;
 }
 
-static inline void setbit(void *_v, size_t pos, bool bit)
-{
-  uint8_t *v = _v;
-  v[pos >> 3] |= bit << (pos % 8);
-}
-
 /**
  * Compute in-place transpose of a matrix of (m x n) bits.
  */
