@@ -186,8 +186,8 @@ void kk_receiver(int sockfd, size_t m) {
   uint8_t pad[KAPPA/8];
   for (size_t j = 0; j < ms; j++) {
     hash(pad, T[j], j, CODEN/8, KAPPA/8);
-    Bprint(pad, KAPPA/8);
-    printf("\n");
+    // Bprint(pad, KAPPA/8);
+    // printf("\n");
   }
 
   free(T0);
