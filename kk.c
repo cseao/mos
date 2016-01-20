@@ -21,7 +21,7 @@ static uint8_t codewords[WORDS][CODEN/8] = {
 };
 
 static void
-sender_check(const int sockfd, const uint8_t delta[CODEN/8], const uint8_t (*QT)[CODEN/8], const size_t m)
+sender_check(const int sockfd, uint8_t delta[CODEN/8], uint8_t (*QT)[CODEN/8], const size_t m)
 {
   uint8_t mu[SSEC][m/8];
   uint8_t q_i[CODEN/8];
@@ -114,7 +114,7 @@ void kk_sender(int sockfd, size_t m)
 
 
 static void
-receiver_check(const int sockfd, const uint8_t *choices, const uint8_t (*T)[CODEN/8], const size_t m)
+receiver_check(const int sockfd,  uint8_t *choices, uint8_t (*T)[CODEN/8], const size_t m)
 {
   uint8_t mu[SSEC][m/8];
   uint8_t w_i;
