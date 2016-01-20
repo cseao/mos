@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stddef.h>
+
 #include <blake2.h>
 
 #include "libot/ot.h"
