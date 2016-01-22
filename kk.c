@@ -23,7 +23,7 @@ static uint8_t codewords[WORDS][CODEN/8] = {
 static void
 sender_check(const int sockfd, uint8_t delta[CODEN/8], uint8_t (*QT)[CODEN/8], const size_t m)
 {
-  uint8_t mu[SSEC][m/8];
+  uint8_t (*mu)[m/8] = malloc(SSEC * sizeof(*mu));
   uint8_t q[SSEC][CODEN/8];
   uint8_t t[SSEC][CODEN/8];
   uint8_t c[SSEC][CODEN/8];
@@ -60,6 +60,7 @@ sender_check(const int sockfd, uint8_t delta[CODEN/8], uint8_t (*QT)[CODEN/8], c
       exit(EXIT_FAILURE);
     }
   }
+  free(mu);
 }
 
 void kk_sender(int sockfd, size_t m)
@@ -122,25 +123,35 @@ void kk_sender(int sockfd, size_t m)
 static void
 receiver_check(const int sockfd,  uint8_t *choices, uint8_t (*T)[CODEN/8], const size_t m)
 {
-  uint8_t mu[SSEC][m/8];
+  uint8_t (*mu)[m/8] = malloc(SSEC * sizeof(*mu));
   uint8_t w[SSEC];
   uint8_t t[SSEC][CODEN/8];
 
-  for (size_t i = 0; i < SSEC; ++i) {
+  /* Read μs from the network */
+  for (int i = 0; i < SSEC; ++i) {
     reading(sockfd, mu[i], KAPPA/8);
     prg_extend(mu[i], m/8);
-
+    /* Initialize checks to base otp */
     memcpy(t[i], T[m + i], CODEN/8);
     w[i] = choices[m + i];
-    for (size_t j = 0; j < m; ++j) {
+  }
+
+  /* Compute check values */
+  for (size_t j = 0; j < m; ++j) {
+    for (int i = 0; i < SSEC; ++i) {
       if (getbit(mu[i], j)) {
         w[i] ^= choices[j];
         bitxor(t[i], T[j], CODEN);
       }
     }
+  }
+
+  /* Send check values */
+  for (int i = 0; i < SSEC; ++i) {
     writing(sockfd, t[i], CODEN/8);
     writing(sockfd, &w[i], 1);
   }
+  free(mu);
 }
 
 void kk_receiver(int sockfd, size_t m) {
@@ -174,6 +185,7 @@ void kk_receiver(int sockfd, size_t m) {
 
   uint8_t (*CT)[ms/8] = malloc(CODEN * sizeof(*CT));
   transpose(CT, C, ms, CODEN);
+  free(C);
   uint8_t *u = malloc(ms/8 * sizeof(*u));
   for (size_t i = 0; i < CODEN; ++i) {
     memcpy(u, CT[i], ms/8);
@@ -184,6 +196,8 @@ void kk_receiver(int sockfd, size_t m) {
 
   uint8_t (*T)[CODEN/8] = malloc(ms * sizeof(*T));
   transpose(T, T0, CODEN, ms);
+  free(T0);
+  free(T1);
 
   if (active_security) {
     receiver_check(sockfd, choices, T, m);
@@ -196,9 +210,6 @@ void kk_receiver(int sockfd, size_t m) {
     // printf("\n");
   }
 
-  free(T0);
-  free(T1);
-  free(C);
   free(choices);
   free(CT);
   free(u);
