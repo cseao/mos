@@ -11,6 +11,13 @@ int server_listen(const int portno) {
         perror("ERROR opening socket");
         exit(-1);
     }
+    int reuseaddr = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr,
+                   sizeof(reuseaddr)) != 0) {
+      perror("ERROR setsockopt");
+      exit(-1);
+    }
+
 
     /* Initialize socket structure */
 
@@ -20,7 +27,6 @@ int server_listen(const int portno) {
     serv_addr.sin_port = htons(portno);
 
     /* Now bind the host address using bind() call.*/
-
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR on binding");
         exit(-1);

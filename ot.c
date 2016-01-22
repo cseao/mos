@@ -25,7 +25,6 @@ int sender_main(int port) {
     int sockfd;
     int newsockfd;
     int rcvbuf = BUFSIZE;
-    int reuseaddr = 1;
 
     sockfd = server_listen(port);
     newsockfd = server_accept(sockfd);
@@ -35,11 +34,7 @@ int sender_main(int port) {
         perror("ERROR setsockopt");
         exit(-1);
     }
-    if (setsockopt(newsockfd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr,
-                   sizeof(reuseaddr)) != 0) {
-        perror("ERROR setsockopt");
-        exit(-1);
-    }
+
     START_TIMEIT();
     kk_sender(newsockfd, nOTs);
     END_TIMEIT();
