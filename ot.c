@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 
 #include "libot/ot.h"
 #include "otext.h"
@@ -21,7 +22,7 @@ extern bool active_security;
 #define GET_TIMEIT()   __sdiff - (__udiff < 0 ? 1 : 0), __udiff + (__udiff < 0 ? 1000000 : 0)
 #define TIMEIT_FORMAT "%ld.%ld"
 
-int sender_main(int port) {
+static int sender_main(int port) {
     int sockfd;
     int newsockfd;
     int rcvbuf = BUFSIZE;
@@ -38,7 +39,7 @@ int sender_main(int port) {
     START_TIMEIT();
     kk_sender(newsockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
+    printf("%ld OTs sender: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     shutdown(newsockfd, 2);
     shutdown(sockfd, 2);
@@ -46,7 +47,7 @@ int sender_main(int port) {
     return 0;
 }
 
-int receiver_main(const char *host, const int port) {
+static int receiver_main(const char *host, const int port) {
     int sockfd;
     int sndbuf = BUFSIZE;
 
@@ -60,10 +61,27 @@ int receiver_main(const char *host, const int port) {
     START_TIMEIT();
     kk_receiver(sockfd, nOTs);
     END_TIMEIT();
-    printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
+    printf("%ld OTs receiver: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     shutdown(sockfd, 2);
     return 0;
+}
+
+static int both_main(const char *host, const int port) {
+  int spid;
+  if ((spid = fork()) == 0) {
+    sender_main(port);
+    return 0;
+  }
+
+  int rpid;
+  if ((rpid = fork()) == 0) {
+      receiver_main(host, port);
+      return 0;
+  }
+  waitpid(spid, NULL, 0);
+  waitpid(rpid, NULL, 0);
+  return 0;
 }
 
 static const char* short_options = "hH:p:m:n:a";
@@ -158,6 +176,8 @@ int main(int argc, char **argv)
     sender_main(port);
   } else if (!strcmp("receiver", role)) {
     receiver_main(host, port);
+  } else if (!strcmp("both", role)) {
+    both_main(host, port);
   } else {
     usage();
   }
