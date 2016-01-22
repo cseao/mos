@@ -20,7 +20,6 @@ int server_listen(const int portno) {
 
 
     /* Initialize socket structure */
-
     bzero((char *)&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
@@ -64,11 +63,16 @@ void client_connect(int *sock, const char *host, const int portno) {
     /* Create a socket point */
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
     if (sockfd < 0) {
         perror("ERROR opening socket");
         exit(-1);
     }
+    int flag = 1;
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int)) != 0) {
+      perror("ERROR setsockopt");
+      exit(-1);
+    }
+
 
     /* deal with host */
 

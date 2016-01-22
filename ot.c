@@ -49,15 +49,10 @@ int sender_main(int port) {
 int receiver_main(const char *host, const int port) {
     int sockfd;
     int sndbuf = BUFSIZE;
-    int flag = 1;
 
     client_connect(&sockfd, host, port);
 
     if (setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(int)) != 0) {
-        perror("ERROR setsockopt");
-        exit(-1);
-    }
-    if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int)) != 0) {
         perror("ERROR setsockopt");
         exit(-1);
     }
@@ -68,7 +63,6 @@ int receiver_main(const char *host, const int port) {
     printf("[n=%ld] Elapsed time: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     shutdown(sockfd, 2);
-
     return 0;
 }
 
