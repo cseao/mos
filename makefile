@@ -1,5 +1,5 @@
 CC?=cc
-CFLAGS?=-mavx -O3 -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99
+CFLAGS+=-mavx -O3 -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99 -DNDEBUG
 
 PROTOCOLS= std.o kk.o
 OBJS= ot.o bitmath.o oracle.o $(PROTOCOLS)

@@ -109,10 +109,14 @@ void kk_sender(int sockfd, size_t m)
       bitand(q, codewords[i], CODEN);
       bitxor(q, QT[j], CODEN);
       hash(q, q, j, CODEN/8, KAPPA/8);
-      // Bprint(q, KAPPA/8);
-      // printf("\t");
+#ifndef NDEBUG
+      Bprint(q, KAPPA/8);
+      printf("\t");
+#endif
     }
-    // printf("\n");
+#ifndef NDEBUG
+    printf("\n");
+#endif
   }
   free(Q);
   free(QT);
@@ -206,8 +210,10 @@ void kk_receiver(int sockfd, size_t m) {
   uint8_t pad[KAPPA/8];
   for (size_t j = 0; j < ms; j++) {
     hash(pad, T[j], j, CODEN/8, KAPPA/8);
-    // Bprint(pad, KAPPA/8);
-    // printf("\n");
+#ifndef NDEBUG
+    Bprint(pad, KAPPA/8);
+    printf("\n");
+#endif
   }
 
   free(choices);
