@@ -24,36 +24,42 @@ static void
 sender_check(const int sockfd, uint8_t delta[CODEN/8], uint8_t (*QT)[CODEN/8], const size_t m)
 {
   uint8_t mu[SSEC][m/8];
-  uint8_t q_i[CODEN/8];
-  uint8_t t_i[CODEN/8];
-  uint8_t c_i[CODEN/8];
-  uint8_t w_i;
-  for (size_t i = 0; i < SSEC; ++i) {
+  uint8_t q[SSEC][CODEN/8];
+  uint8_t t[SSEC][CODEN/8];
+  uint8_t c[SSEC][CODEN/8];
+  uint8_t w[SSEC];
+  for (int i = 0; i < SSEC; ++i) {
     randombytes(mu[i], KAPPA/8);
     writing(sockfd, mu[i], KAPPA/8);
     prg_extend(mu[i], m/8);
 
-    reading(sockfd, t_i, CODEN/8);
-    reading(sockfd, &w_i, 1);
-    if (w_i & ~codewordsm) {
+    memcpy(q[i], QT[m + i], CODEN/8);
+  }
+
+  for (size_t j = 0; j < m; j++) {
+    for (int i = 0; i < SSEC; ++i) {
+      if (getbit(mu[i], j)) {
+        bitxor(q[i], QT[j], CODEN);
+      }
+    }
+  }
+
+  for (int i = 0; i < SSEC; ++i) {
+    reading(sockfd, t[i], CODEN/8);
+    reading(sockfd, &w[i], 1);
+    if (w[i] & ~codewordsm) {
       fprintf(stderr, "Check Failed!\n");
       exit(EXIT_FAILURE);
     }
-    memcpy(q_i, QT[m + i], CODEN/8);
-    memcpy(c_i, codewords[w_i], CODEN/8);
-    for (size_t j = 0; j < m; j++) {
-      if (getbit(mu[i], j)) {
-          bitxor(q_i, QT[j], CODEN);
-      }
-    }
-    bitxor(q_i, t_i, CODEN);
-    bitand(c_i, delta, CODEN);
-    if (!biteq(c_i, q_i, CODEN)) {
+    memcpy(c[i], codewords[w[i]], CODEN/8);
+    bitxor(q[i], t[i], CODEN);
+    bitand(c[i], delta, CODEN);
+
+    if (!biteq(c[i], q[i], CODEN)) {
       fprintf(stderr, "Check failed!\n");
       exit(EXIT_FAILURE);
     }
   }
-
 }
 
 void kk_sender(int sockfd, size_t m)
@@ -117,23 +123,23 @@ static void
 receiver_check(const int sockfd,  uint8_t *choices, uint8_t (*T)[CODEN/8], const size_t m)
 {
   uint8_t mu[SSEC][m/8];
-  uint8_t w_i;
-  uint8_t t_i[CODEN/8];
+  uint8_t w[SSEC];
+  uint8_t t[SSEC][CODEN/8];
 
   for (size_t i = 0; i < SSEC; ++i) {
     reading(sockfd, mu[i], KAPPA/8);
     prg_extend(mu[i], m/8);
 
-    memcpy(t_i, T[m + i], CODEN/8);
-    w_i = choices[m + i];
+    memcpy(t[i], T[m + i], CODEN/8);
+    w[i] = choices[m + i];
     for (size_t j = 0; j < m; ++j) {
       if (getbit(mu[i], j)) {
-        w_i ^= choices[j];
-        bitxor(t_i, T[j], CODEN);
+        w[i] ^= choices[j];
+        bitxor(t[i], T[j], CODEN);
       }
     }
-    writing(sockfd, t_i, CODEN/8);
-    writing(sockfd, &w_i, 1);
+    writing(sockfd, t[i], CODEN/8);
+    writing(sockfd, &w[i], 1);
   }
 }
 
