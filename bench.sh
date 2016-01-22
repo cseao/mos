@@ -1,5 +1,5 @@
 set -e
-flag=$2
+flag=$1
 
 f() {
     times=$1
