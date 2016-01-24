@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -41,6 +42,8 @@ static int sender_main(int port) {
     END_TIMEIT();
     printf("%ld OTs sender: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
+    uint8_t end = 0x42;
+    writing(newsockfd, &end, 1);
     shutdown(newsockfd, 2);
     shutdown(sockfd, 2);
 
@@ -63,6 +66,9 @@ static int receiver_main(const char *host, const int port) {
     END_TIMEIT();
     printf("%ld OTs receiver: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
+    uint8_t end;
+    reading(sockfd, &end, 1);
+    assert(end == 0x42);
     shutdown(sockfd, 2);
     return 0;
 }
