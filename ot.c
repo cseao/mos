@@ -16,11 +16,13 @@ extern uint8_t codewordsm;
 extern size_t codewordsn;
 extern bool active_security;
 
-#define START_TIMEIT() struct timeval __start, __end; gettimeofday(&__start, NULL)
-#define END_TIMEIT()   \
+#define START_TIMEIT() \
+  struct timeval __start, __end; gettimeofday(&__start, NULL)
+#define END_TIMEIT()  \
   gettimeofday(&__end, NULL); \
   long int __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
-#define GET_TIMEIT()   __sdiff - (__udiff < 0 ? 1 : 0), __udiff + (__udiff < 0 ? 1000000 : 0)
+#define GET_TIMEIT() \
+  __sdiff - (__udiff < 0 ? 1 : 0), __udiff + (__udiff < 0 ? 1000000 : 0)
 #define TIMEIT_FORMAT "%ld.%ld"
 
 static int sender_main(int port) {
