@@ -102,15 +102,16 @@ void kk_sender(int sockfd, size_t m)
   if (active_security) {
     sender_check(sockfd, delta, QT, m);
   }
-  uint8_t q[CODEN/8];
-  for (size_t j = 0; j < m; ++j) {
+
+  struct {uint8_t q[CODEN/8]; size_t j; } q_j;
+  for (q_j.j = 0; q_j.j < m; ++q_j.j) {
     for (size_t i = 0; i < codewordsn; i++) {
-      memcpy(q, delta, CODEN/8);
-      bitand(q, codewords[i], CODEN);
-      bitxor(q, QT[j], CODEN);
-      hash(q, q, j, CODEN/8, KAPPA/8);
+      memcpy(q_j.q, delta, CODEN/8);
+      bitand(q_j.q, codewords[i], CODEN);
+      bitxor(q_j.q, QT[q_j.j], CODEN);
+      base_hash((void *) &q_j, sizeof(q_j));
 #ifndef NDEBUG
-      Bprint(q, KAPPA/8);
+      Bprint(q_j.q, KAPPA/8);
       printf("\t");
 #endif
     }

@@ -31,8 +31,14 @@ void hash(uint8_t *out, uint8_t *in, const size_t j, const size_t inlen)
 {
   static const int jsize = sizeof(size_t);
   uint8_t inj[inlen + jsize];
-  memcpy(inj, &j, jsize);
-  memcpy(inj + jsize, in, inlen);
+  memcpy(inj, in, inlen);
+  memcpy(inj + inlen, &j, jsize);
 
   blake2(out, inj, NULL, KAPPA/8, inlen + jsize, 0);
+}
+
+
+void base_hash(void *in, const size_t inlen)
+{
+  blake2(in, in, NULL, KAPPA/8, inlen, 0);
 }
