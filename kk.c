@@ -71,7 +71,7 @@ void kk_sender(int sockfd, size_t m)
     exit(EXIT_FAILURE);
   }
   /* let m' = m + s */
-  size_t ms = (m + SSEC);
+  size_t ms = active_security? m + SSEC : m;
 
   /* Perform the base OTs, extends them and place those in a matrix Q. */
   uint8_t delta[CODEN/8];
@@ -103,7 +103,7 @@ void kk_sender(int sockfd, size_t m)
     sender_check(sockfd, delta, QT, m);
   }
   uint8_t q[CODEN/8];
-  for (size_t j = 0; j < ms; ++j) {
+  for (size_t j = 0; j < m; ++j) {
     for (size_t i = 0; i < codewordsn; i++) {
       memcpy(q, delta, CODEN/8);
       bitand(q, codewords[i], CODEN);
@@ -166,7 +166,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   /* let m' = m + s. */
-  size_t ms = m + SSEC;
+  size_t ms = active_security? m + SSEC : m;
 
   /* note: rows here are columns in the paper. */
   baseot_sender(sockfd, CODEN, p[1]);
@@ -208,7 +208,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   uint8_t pad[KAPPA/8];
-  for (size_t j = 0; j < ms; j++) {
+  for (size_t j = 0; j < m; j++) {
     hash(pad, T[j], j, CODEN/8, KAPPA/8);
 #ifndef NDEBUG
     Bprint(pad, KAPPA/8);

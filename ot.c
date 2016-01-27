@@ -178,7 +178,9 @@ int main(int argc, char **argv)
    * Our internal arithmetic functions assume that the input can always be
    * splitted in branches of 128 bits, so here we get to the nearest multiple.
    */
-  nOTs -= (nOTs + SSEC) % 128;
+  if (active_security) {
+    nOTs += 128 - (nOTs + SSEC) % 128;
+  }
 
   if (!strcmp("sender", role))  {
     sender_main(port);
