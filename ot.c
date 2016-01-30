@@ -20,10 +20,10 @@ extern bool active_security;
   struct timeval __start, __end; gettimeofday(&__start, NULL)
 #define END_TIMEIT()  \
   gettimeofday(&__end, NULL); \
-  long int __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
+  double __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
 #define GET_TIMEIT() \
-  __sdiff - (__udiff < 0 ? 1 : 0), __udiff + (__udiff < 0 ? 1000000 : 0)
-#define TIMEIT_FORMAT "%ld.%ld"
+  __sdiff + __udiff * 1e-6
+#define TIMEIT_FORMAT "%lf"
 
 static int sender_main(int port) {
     int sockfd;
