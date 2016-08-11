@@ -116,6 +116,16 @@ void test_biteq()
   assert(biteq(a, b, 256));
 }
 
+void test_bitmatrix()
+{
+  new_bitmatrix(m, 8, 8);
+  uint8_t v[] = "ABCDEFGH";
+  bitcpy(m.M, v, 8*8);
+  assert(!memcmp(row(m, 0), v, 1));
+  assert(!memcmp(row(m, 1), v+1, 1));
+  assert(!memcmp(row(m, 7), v+7, 1));
+}
+
 
 int main()
 {
@@ -125,5 +135,6 @@ int main()
   test_transpose_identity();
   test_transpose_endianness();
   test_biteq();
+  test_bitmatrix();
   return 0;
 }

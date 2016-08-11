@@ -15,35 +15,35 @@ static uint8_t *delta;
 static void
 sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
 {
-  uint8_t (*mu)[octs(m)] = malloc(SSEC * sizeof(*mu));
+  new_bitmatrix(mu, SSEC, m);
   uint8_t q[SSEC][octs(CODEN)];
   uint8_t t[SSEC][octs(CODEN)];
   uint8_t c[SSEC][octs(CODEN)];
   uint8_t w[SSEC];
   for (int i = 0; i < SSEC; ++i) {
-    randombytes(mu[i], octs(KAPPA));
-    writing(sockfd, mu[i], octs(KAPPA));
-    prg_extend(mu[i], octs(m));
+    randombits(row(mu, i), KAPPA);
+    writebits(sockfd, row(mu, i), KAPPA);
+    prgbits(row(mu, i), m);
 
-    memcpy(q[i], QT[m + i], octs(CODEN));
+    bitcpy(q[i], QT[m + i], CODEN);
   }
 
   for (size_t j = 0; j < m; ++j) {
     for (int i = 0; i < SSEC; ++i) {
-      if (getbit(mu[i], j)) {
+      if (getbit(row(mu, i), j)) {
         bitxor(q[i], QT[j], CODEN);
       }
     }
   }
 
   for (int i = 0; i < SSEC; ++i) {
-    reading(sockfd, t[i], octs(CODEN));
+    readbits(sockfd, t[i], CODEN);
     reading(sockfd, &w[i], 1);
     if (w[i] & ~codewordsm) {
       fprintf(stderr, "Check Failed!\n");
       exit(EXIT_FAILURE);
     }
-    memcpy(c[i], codewords[w[i]], octs(CODEN));
+    bitcpy(c[i], codewords[w[i]], CODEN);
     bitxor(q[i], t[i], CODEN);
     bitand(c[i], delta, CODEN);
 
@@ -52,7 +52,7 @@ sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
       exit(EXIT_FAILURE);
     }
   }
-  free(mu);
+  free_bitmatrix(mu);
 }
 
 void kk_sender(int sockfd, size_t m)
@@ -68,7 +68,7 @@ void kk_sender(int sockfd, size_t m)
   /* Perform the base OTs, extends them and place those in a matrix Q. */
   delta = bitalloc(CODEN);
   uint8_t unpacked_delta[CODEN];
-  randombytes(delta, octs(CODEN));
+  randombits(delta, CODEN);
   for (size_t i = 0; i < CODEN; ++i) {
     unpacked_delta[i] = getbit(delta, i);
   }
@@ -76,13 +76,13 @@ void kk_sender(int sockfd, size_t m)
   baseot_receiver(sockfd, CODEN, unpacked_delta, p[1]);
   uint8_t (*Q)[octs(ms)] = malloc(CODEN * sizeof(*Q));
   for (size_t i = 0; i < CODEN; ++i) {
-    reading(p[0], Q[i], octs(KAPPA));
-    prg_extend(Q[i], octs(ms));
+    readbits(p[0], Q[i], KAPPA);
+    prgbits(Q[i], ms);
   }
 
-  uint8_t *u = malloc(octs(ms) * sizeof(*u));
+  uint8_t *u = bitalloc(ms);
   for (size_t i = 0; i < CODEN; ++i) {
-    reading(sockfd, u, octs(ms));
+    readbits(sockfd, u, ms);
     if (unpacked_delta[i]) {
       bitxor(Q[i], u, ms);
     }
@@ -99,7 +99,7 @@ void kk_sender(int sockfd, size_t m)
   struct {uint8_t q[octs(CODEN)]; size_t j; } q_j;
   for (q_j.j = 0; q_j.j < m; ++q_j.j) {
     for (size_t i = 0; i < codewordsn; i++) {
-      memcpy(q_j.q, delta, octs(CODEN));
+      bitcpy(q_j.q, delta, CODEN);
       // XXX. also here intrinsics fucks up
       bitcpy(c, codewords[i], CODEN);
       bitand(q_j.q, c, CODEN);

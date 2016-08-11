@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 typedef __uint128_t uint128_t;
 typedef uint128_t uint256_t[2];
@@ -21,3 +22,18 @@ uint8_t getbit(const void *_v, size_t pos);
 #define octs(bits)              bits >> 3
 #define u8(bits)                bits >> 3
 #define bitcell(M, row, col)    ((const uint8_t *) M + row * (col >> 3))
+
+struct bitmatrix {
+  uint8_t *M;
+  const size_t offset;
+};
+
+#define new_bitmatrix(NAME, rows, cols)         \
+  struct bitmatrix NAME = {                     \
+    .M = bitalloc(rows * cols),                 \
+    .offset = octs(cols),                       \
+  }
+#define free_bitmatrix(NAME)                    \
+  free(NAME.M)
+#define row(bitmatrix, i)                       \
+  bitmatrix.M + i * bitmatrix.offset
