@@ -12,8 +12,7 @@
 static uint8_t *choices;
 static bitmatrix_t T;
 
-static void
-receiver_check(const int sockfd, const size_t m)
+static void receiver_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
   bitmatrix_t t = new_bitmatrix(SSEC, CODEN);
