@@ -15,3 +15,4 @@ code_t repetition;
 code_t wh;
 
 void encode(const code_t* code, void *c, void *word);
+code_t *code_from_string(const char *s);

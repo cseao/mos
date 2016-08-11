@@ -9,13 +9,14 @@
 #include <sys/wait.h>
 
 #include "libot/ot.h"
+#include "codes.h"
 #include "otext.h"
 
 static size_t nOTs = 1 << 10;
 bool active_security = false;
-const code_t *code;
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
+code_t *code = &wh;
 
 
 #define START_TIMEIT()                                          \
@@ -94,7 +95,7 @@ static int both_main(const char *host, const int port) {
   return 0;
 }
 
-static const char* short_options = "hH:p:m:n:a";
+static const char* short_options = "hH:p:m:n:aC:";
 
 static const struct option long_options[] = {
   {"help", no_argument, 0, 'h'},
@@ -103,6 +104,7 @@ static const struct option long_options[] = {
   {"nots", required_argument, 0, 'm'},
   {"out-of", required_argument, 0, 'n'},
   {"active", no_argument, 0, 'a'},
+  {"code", required_argument, 0, 'C'},
   {0, 0, 0, 0}
 };
 
@@ -118,6 +120,7 @@ const char help_message[] =
 "-p INT, --port INT             IP-port [default: 1337].\n"
 "-n INT, --out-of INT           Do 1-out-of-n oblivious transfer\n"
 "-a, --active                   Perform active-security checks.\n"
+"-C, --code                     Linear code to be used [default: WH]\n"
 "";
 
 const char usage_pattern[] =
@@ -130,6 +133,19 @@ void usage()
 {
   fputs(usage_pattern, stderr);
   exit(EXIT_FAILURE);
+}
+
+
+code_t *code_from_string(const char *s)
+{
+  if (!strcmp(s, wh.name)) {
+    return &wh;
+  } else if (!strcmp(s, repetition.name)) {
+    return &repetition;
+  } else {
+    fputs("Invalid Linear Code.\n", stderr);
+    exit(EXIT_FAILURE);
+  }
 }
 
 int main(int argc, char **argv)
@@ -170,13 +186,14 @@ int main(int argc, char **argv)
     case 'a':
       active_security = true;
       break;
+    case 'C':
+      code = code_from_string(optarg);
+      break;
     case '?':
     default:
       usage();
     }
   }
-  // XXX. make this an optional command-line argument.
-  code = &wh;
 
   /*
    * Our internal arithmetic functions assume that the input can always be

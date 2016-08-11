@@ -19,12 +19,12 @@ uint8_t getbit(const void *_v, size_t pos);
 /**
  * The minimum number of octets needed in order to store `bits`.
  */
-//#define octs(bits)              (bits >> 3)
-#define octs(bits)              ((bits) >> 3) + ((bits) % 8 != 0)
+//#define octs(bits)  (bits >> 3)
+#define octs(bits)    ((bits) >> 3) + ((bits) % 8 != 0)
 
 
 /**
- * Set to zero (respectively, one) the vector `dest` oct(bits) long.
+ * Set to zero (respectively, one) the vector `dest` long `oct(bits)`.
  */
 #define bitset_zero(dest, bits) memset(dest, 0, octs(bits))
 #define bitset_one(dest, bits)  memset(dest, 0xff, octs(bits))
@@ -36,7 +36,7 @@ uint8_t getbit(const void *_v, size_t pos);
  */
 #define bitcpy(dest, src, bits) memcpy(dest, src, octs(bits))
 // XXX. TODO: make this a call to malloc() instead, we shouldn't need initialization.
-#define bitalloc(bits)          calloc((bits) >> 3, sizeof(uint8_t))
+#define bitalloc(bits)          calloc(octs(bits), sizeof(uint8_t))
 
 #define bitcell(M, row, col)    ((const uint8_t *) M + row * octs(col))
 
@@ -51,11 +51,11 @@ typedef struct bitmatrix {
 
 #define new_bitmatrix(rows, cols)               \
   (bitmatrix_t) {                               \
-    .M = bitalloc(rows * cols),                 \
+    .M = malloc(rows * octs(cols)),             \
     .offset = octs(cols),                       \
   }
 
 #define free_bitmatrix(NAME)                    \
   free(NAME.M)
-#define row(bitmatrix, i)                       \
-  bitmatrix.M + (i) * bitmatrix.offset
+#define row(bm, i)                              \
+  bm.M + (i) * bm.offset

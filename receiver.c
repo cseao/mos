@@ -40,7 +40,7 @@ static void receiver_check(const int sockfd, const size_t m)
   /* Send check values */
   for (int i = 0; i < SSEC; ++i) {
     writebits(sockfd, row(t, i), code->n);
-    writing(sockfd, &w[i], 1);
+    writebits(sockfd, &w[i], code->k);
   }
   free_bitmatrix(mu);
   free_bitmatrix(t);
@@ -68,7 +68,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   bitmatrix_t C = new_bitmatrix(ms, code->n);
-  choices = new_bitmatrix(ms, code->k);
+  choices = new_bitmatrix(ms, 8);
   randombits(choices.M, ms * code->k);
   for (size_t i = 0; i < ms; ++i) {
     bitmask(row(choices, i), codewordsm);
@@ -78,6 +78,7 @@ void kk_receiver(int sockfd, size_t m) {
   bitmatrix_t CT = new_bitmatrix(code->n, ms);
   transpose(CT.M, C.M, ms, code->n);
   free_bitmatrix(C);
+
   uint8_t *u = bitalloc(ms);
   for (size_t i = 0; i < code->n; ++i) {
     bitcpy(u, row(CT, i), ms);
