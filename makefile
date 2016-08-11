@@ -28,4 +28,8 @@ bitmath_test: bitmath.o bitmath_test.o
 codes_test: codes.o codes_test.o bitmath.o
 	$(CC) $(CFLAGS) codes.o codes_test.o bitmath.o -o codes_test
 
-.PHONY: libot clean bitmath_test
+bench: bitmath.o codes.o codes_bench.o
+	$(CC) $(CFLAGS) $^ -o codes_bench
+	./codes_bench < /dev/urandom | pv -s 500m -S > /dev/null
+
+.PHONY: libot clean bitmath_test bench
