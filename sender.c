@@ -8,10 +8,6 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
-#define PROTOCOL_ABORT()                        \
-  fprintf(stderr, "Check Failed!\n");           \
-  exit(EXIT_FAILURE)
-
 static uint8_t *delta;
 static bitmatrix_t QT;
 
@@ -95,16 +91,20 @@ void kk_sender(int sockfd, size_t m)
     sender_check(sockfd, m);
   }
 
-  struct {uint8_t q[octs(CODEN)]; size_t j; } q_j;
-  for (q_j.j = 0; q_j.j < m; ++q_j.j) {
+  uint8_t blob[octs(code->n) + sizeof(size_t)];
+  uint8_t q[octs(code->n)];
+  size_t j;
+  for (j = 0; j < m; ++j) {
     for (uint8_t i = 0; i < codewordsn; i++) {
-      // XXX. also here intrinsics fucks up
-      encode(code, q_j.q, &i);
-      bitand(q_j.q, delta, code->n);
-      bitxor(q_j.q, row(QT, q_j.j), code->n);
-      base_hash((void *) &q_j, sizeof(q_j));
+      encode(code, q, &i);
+      bitand(q, delta, code->n);
+      bitxor(q, row(QT, j), code->n);
+
+      bitcpy(blob, q, code->n);
+      memcpy(blob + octs(code->n), &j, sizeof(size_t));
+      base_hash(blob, sizeof(blob));
 #ifndef NDEBUG
-      Bprint(q_j.q, octs(KAPPA));
+      Bprint(blob, octs(KAPPA));
       printf("\t");
 #endif
     }
