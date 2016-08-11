@@ -117,4 +117,5 @@ void kk_sender(int sockfd, size_t m)
   free_bitmatrix(Q);
   free_bitmatrix(QT);
   free(u);
+  free(delta);
 }
