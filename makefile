@@ -1,7 +1,7 @@
 CC?=cc
 CFLAGS+=-mavx -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99 -g
 
-OBJS= ot.o bitmath.o oracle.o std.o otext.o sender.o receiver.o
+OBJS= ot.o bitmath.o oracle.o std.o otext.o sender.o receiver.o codes.o
 
 all: ot
 

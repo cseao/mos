@@ -173,6 +173,8 @@ int main(int argc, char **argv)
       usage();
     }
   }
+  // XXX. make this an optional command-line argument.
+  code = &wh;
 
   /*
    * Our internal arithmetic functions assume that the input can always be

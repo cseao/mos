@@ -14,13 +14,13 @@ void bitand(void *_a, const void *_b, size_t n);
 bool biteq(const void *_a, const void *_b, size_t n);
 uint8_t getbit(const void *_v, size_t pos);
 
-
 #define bitset_zero(dest, bits) memset(dest, 0, bits >> 3)
 #define bitset_one(dest, bits)  memset(dest, 0xff, bits >> 3)
 #define bitcpy(dest, src, bits) memcpy(dest, src, bits >> 3)
+// XXX. TODO: make this a call to malloc() instead, we shouldn't need initialization.
 #define bitalloc(bits)          calloc(bits >> 3, sizeof(uint8_t))
-#define octs(bits)              bits >> 3
-#define u8(bits)                bits >> 3
+#define octs(bits)              (bits >> 3)
+#define u8(bits)                (bits >> 3)
 #define bitcell(M, row, col)    ((const uint8_t *) M + row * (col >> 3))
 
 typedef struct bitmatrix {

@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include "codes.h"
 #include "oracle.h"
 #include "otext.h"
 #include "bitmath.h"
@@ -14,6 +15,9 @@
 #define CODEK KAPPA
 
 bool active_security = false;
+
+const code_t *code;
+
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
 uint8_t codewords[WORDS][CODEN/8+1] = {

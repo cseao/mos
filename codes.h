@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-typedef struct {
+typedef struct code {
   const char* name;
 
   const uint32_t n;

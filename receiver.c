@@ -15,7 +15,7 @@ static bitmatrix_t T;
 static void receiver_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
-  bitmatrix_t t = new_bitmatrix(SSEC, CODEN);
+  bitmatrix_t t = new_bitmatrix(SSEC, code->n);
   uint8_t w[SSEC];
 
   /* Read μs from the network */
@@ -23,7 +23,7 @@ static void receiver_check(const int sockfd, const size_t m)
     readbits(sockfd, row(mu, i), KAPPA);
     prgbits(row(mu, i), m);
     /* Initialize checks to base otp */
-    bitcpy(row(t, i), row(T, m+i), CODEN);
+    bitcpy(row(t, i), row(T, m+i), code->n);
     w[i] = choices[m + i];
   }
 
@@ -32,14 +32,14 @@ static void receiver_check(const int sockfd, const size_t m)
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(row(mu, i), j)) {
         w[i] ^= choices[j];
-        bitxor(row(t, i), row(T, j), CODEN);
+        bitxor(row(t, i), row(T, j), code->n);
       }
     }
   }
 
   /* Send check values */
   for (int i = 0; i < SSEC; ++i) {
-    writebits(sockfd, row(t, i), CODEN);
+    writebits(sockfd, row(t, i), code->n);
     writing(sockfd, &w[i], 1);
   }
   free_bitmatrix(mu);
@@ -57,37 +57,37 @@ void kk_receiver(int sockfd, size_t m) {
   size_t ms = active_security? m + SSEC : m;
 
   /* note: rows here are columns in the paper. */
-  baseot_sender(sockfd, CODEN, p[1]);
-  bitmatrix_t T0 = new_bitmatrix(CODEN, ms);
-  bitmatrix_t T1 = new_bitmatrix(CODEN, ms);
-  for (size_t i = 0; i < CODEN; i++) {
+  baseot_sender(sockfd, code->n, p[1]);
+  bitmatrix_t T0 = new_bitmatrix(code->n, ms);
+  bitmatrix_t T1 = new_bitmatrix(code->n, ms);
+  for (size_t i = 0; i < code->n; i++) {
     reading(p[0], row(T0, i), octs(KAPPA));
     prgbits(row(T0, i), ms);
     reading(p[0], row(T1, i), octs(KAPPA));
     prgbits(row(T1, i), ms);
   }
 
-  bitmatrix_t C = new_bitmatrix(ms, CODEN);
+  bitmatrix_t C = new_bitmatrix(ms, code->n);
   choices = malloc(ms * sizeof(*choices));
   randombits(choices, ms * 8);
   for (size_t i = 0; i < ms; ++i) {
     choices[i] &= codewordsm;
-    bitcpy(row(C, i), codewords + choices[i], CODEN);
+    bitcpy(row(C, i), codewords + choices[i], code->n);
   }
 
-  bitmatrix_t CT = new_bitmatrix(CODEN, ms);
-  transpose(CT.M, C.M, ms, CODEN);
+  bitmatrix_t CT = new_bitmatrix(code->n, ms);
+  transpose(CT.M, C.M, ms, code->n);
   free_bitmatrix(C);
   uint8_t *u = bitalloc(ms);
-  for (size_t i = 0; i < CODEN; ++i) {
+  for (size_t i = 0; i < code->n; ++i) {
     bitcpy(u, row(CT, i), ms);
     bitxor(u, row(T0, i), ms);
     bitxor(u, row(T1, i), ms);
     writebits(sockfd, u, ms);
   }
 
-  T = new_bitmatrix(ms, CODEN);
-  transpose(T.M, T0.M, CODEN, ms);
+  T = new_bitmatrix(ms, code->n);
+  transpose(T.M, T0.M, code->n, ms);
   free_bitmatrix(T0);
   free_bitmatrix(T1);
 
@@ -97,7 +97,7 @@ void kk_receiver(int sockfd, size_t m) {
 
   uint8_t pad[octs(KAPPA)];
   for (size_t j = 0; j < m; ++j) {
-    hash(pad, row(T, j), j, octs(CODEN), octs(KAPPA));
+    hash(pad, row(T, j), j, octs(code->n), octs(KAPPA));
 #ifndef NDEBUG
     Bprint(pad, octs(KAPPA));
     printf("\n");
