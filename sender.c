@@ -15,7 +15,7 @@ static uint8_t *delta;
 static void
 sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
 {
-  new_bitmatrix(mu, SSEC, m);
+  bitmatrix_t mu = new_bitmatrix(SSEC, m);
   uint8_t q[SSEC][octs(CODEN)];
   uint8_t t[SSEC][octs(CODEN)];
   uint8_t c[SSEC][octs(CODEN)];

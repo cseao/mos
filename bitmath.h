@@ -23,17 +23,18 @@ uint8_t getbit(const void *_v, size_t pos);
 #define u8(bits)                bits >> 3
 #define bitcell(M, row, col)    ((const uint8_t *) M + row * (col >> 3))
 
-struct bitmatrix {
+typedef struct bitmatrix {
   uint8_t *M;
-  const size_t offset;
-};
+  size_t offset;
+} bitmatrix_t;
 
-#define new_bitmatrix(NAME, rows, cols)         \
-  struct bitmatrix NAME = {                     \
+#define new_bitmatrix(rows, cols)               \
+  (bitmatrix_t) {                               \
     .M = bitalloc(rows * cols),                 \
     .offset = octs(cols),                       \
   }
+
 #define free_bitmatrix(NAME)                    \
   free(NAME.M)
 #define row(bitmatrix, i)                       \
-  bitmatrix.M + i * bitmatrix.offset
+  bitmatrix.M + (i) * bitmatrix.offset

@@ -10,20 +10,21 @@
 #include "libot/ot.h"
 
 static uint8_t *choices;
+static bitmatrix_t T;
 
 static void
-receiver_check(const int sockfd,  uint8_t (*T)[octs(CODEN)], const size_t m)
+receiver_check(const int sockfd, const size_t m)
 {
-  new_bitmatrix(mu, SSEC, m);
+  bitmatrix_t mu = new_bitmatrix(SSEC, m);
   uint8_t w[SSEC];
-  new_bitmatrix(t, SSEC, CODEN);
+  bitmatrix_t t = new_bitmatrix(SSEC, CODEN);
 
   /* Read μs from the network */
   for (int i = 0; i < SSEC; ++i) {
     readbits(sockfd, row(mu, i), KAPPA);
     prgbits(row(mu, i), m);
     /* Initialize checks to base otp */
-    bitcpy(row(t, i), T[m + i], CODEN);
+    bitcpy(row(t, i), row(T, m+i), CODEN);
     w[i] = choices[m + i];
   }
 
@@ -32,7 +33,7 @@ receiver_check(const int sockfd,  uint8_t (*T)[octs(CODEN)], const size_t m)
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(row(mu, i), j)) {
         w[i] ^= choices[j];
-        bitxor(row(t, i), T[j], CODEN);
+        bitxor(row(t, i), row(T, j), CODEN);
       }
     }
   }
@@ -86,18 +87,18 @@ void kk_receiver(int sockfd, size_t m) {
     writebits(sockfd, u, ms);
   }
 
-  uint8_t (*T)[octs(CODEN)] = malloc(ms * sizeof(*T));
-  transpose(T, T0, CODEN, ms);
+  T = new_bitmatrix(ms, CODEN);
+  transpose(T.M, T0, CODEN, ms);
   free(T0);
   free(T1);
 
   if (active_security) {
-    receiver_check(sockfd, T, m);
+    receiver_check(sockfd, m);
   }
 
   uint8_t pad[octs(KAPPA)];
   for (size_t j = 0; j < m; ++j) {
-    hash(pad, T[j], j, octs(CODEN), octs(KAPPA));
+    hash(pad, row(T, j), j, octs(CODEN), octs(KAPPA));
 #ifndef NDEBUG
     Bprint(pad, octs(KAPPA));
     printf("\n");
@@ -107,5 +108,5 @@ void kk_receiver(int sockfd, size_t m) {
   free(choices);
   free(CT);
   free(u);
-  free(T);
+  free_bitmatrix(T);
 }
