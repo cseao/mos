@@ -12,16 +12,18 @@
 #include "otext.h"
 
 static size_t nOTs = 1 << 10;
-extern uint8_t codewordsm;
-extern size_t codewordsn;
-extern bool active_security;
+bool active_security = false;
+const code_t *code;
+uint8_t codewordsm = 1;
+size_t codewordsn = 2;
 
-#define START_TIMEIT() \
+
+#define START_TIMEIT()                                          \
   struct timeval __start, __end; gettimeofday(&__start, NULL)
-#define END_TIMEIT()  \
-  gettimeofday(&__end, NULL); \
+#define END_TIMEIT()          \
+  gettimeofday(&__end, NULL);                                           \
   double __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
-#define GET_TIMEIT() \
+#define GET_TIMEIT()                            \
   __sdiff + __udiff * 1e-6
 #define TIMEIT_FORMAT "%lf"
 
