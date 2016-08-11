@@ -20,7 +20,6 @@ extern bool active_security;
 extern uint8_t codewordsm;
 extern size_t codewordsn;
 extern const code_t *code;
-extern uint8_t codewords[WORDS][CODEN/8+1];
 
 void std_sender(int sockfd, int nOTs);
 void std_receiver(int sockfd, int nOTs);

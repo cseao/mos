@@ -20,6 +20,3 @@ const code_t *code;
 
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
-uint8_t codewords[WORDS][CODEN/8+1] = {
-#include "wh.txt"
-};
