@@ -4,9 +4,6 @@
 #include "bitmath.h"
 #include "codes.h"
 
-#define WORDS KAPPA*2
-#define CODEN KAPPA*2
-#define CODEK KAPPA
 #define SSEC 40
 
 #define writebits(from, to, howmany) writing(from, to, octs(howmany))
