@@ -71,7 +71,7 @@ void kk_receiver(int sockfd, size_t m) {
   randombits(choices, ms * 8);
   for (size_t i = 0; i < ms; ++i) {
     choices[i] &= codewordsm;
-    bitcpy(row(C, i), codewords + choices[i], code->n);
+    encode(code, row(C, i), &choices[i]);
   }
 
   bitmatrix_t CT = new_bitmatrix(code->n, ms);

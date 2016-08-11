@@ -8,6 +8,9 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
+#define PROTOCOL_ABORT()                        \
+  fprintf(stderr, "Check Failed!\n");           \
+  exit(EXIT_FAILURE)
 
 static uint8_t *delta;
 static bitmatrix_t QT;
@@ -37,18 +40,16 @@ static void sender_check(const int sockfd, const size_t m)
 
   for (int i = 0; i < SSEC; ++i) {
     readbits(sockfd, t[i], code->n);
-    reading(sockfd, &w[i], 1);
-    if (w[i] & ~codewordsm) {
-      fprintf(stderr, "Check Failed!\n");
-      exit(EXIT_FAILURE);
-    }
-    bitcpy(c[i], codewords[w[i]], code->n);
+    readbits(sockfd, &w[i], code->k);
+    // if (w[i] & ~codewordsm) {
+    //   PROTOCOL_ABORT();
+    // }
+    encode(code, c[i], &w[i]);
     bitxor(q[i], t[i], code->n);
     bitand(c[i], delta, code->n);
 
     if (!biteq(c[i], q[i], code->n)) {
-      fprintf(stderr, "Check failed!\n");
-      exit(EXIT_FAILURE);
+      PROTOCOL_ABORT();
     }
   }
   free_bitmatrix(mu);
@@ -97,10 +98,10 @@ void kk_sender(int sockfd, size_t m)
   uint8_t c[octs(code->n)];
   struct {uint8_t q[octs(CODEN)]; size_t j; } q_j;
   for (q_j.j = 0; q_j.j < m; ++q_j.j) {
-    for (size_t i = 0; i < codewordsn; i++) {
+    for (uint8_t i = 0; i < codewordsn; i++) {
       bitcpy(q_j.q, delta, code->n);
       // XXX. also here intrinsics fucks up
-      bitcpy(c, codewords[i], code->n);
+      encode(code, c, &i);
       bitand(q_j.q, c, code->n);
       bitxor(q_j.q, row(QT, q_j.j), code->n);
       base_hash((void *) &q_j, sizeof(q_j));
