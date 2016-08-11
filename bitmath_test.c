@@ -118,7 +118,7 @@ void test_biteq()
 
 void test_bitmatrix()
 {
-  new_bitmatrix(m, 8, 8);
+  bitmatrix_t m = new_bitmatrix(8, 8);
   uint8_t v[] = "ABCDEFGH";
   bitcpy(m.M, v, 8*8);
   assert(!memcmp(row(m, 0), v, 1));
