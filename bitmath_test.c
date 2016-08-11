@@ -127,6 +127,24 @@ void test_bitmatrix()
 }
 
 
+void test_bitmask()
+{
+  uint8_t v[] = "\xff\xff\xff";
+  bitmask(v, 20);
+  assert(getbit(v, 10) == 1);
+  assert(getbit(v, 12) == 1);
+  assert(getbit(v, 15) == 1);
+  assert(getbit(v, 20) == 0);
+  assert(getbit(v, 21) == 0);
+  assert(getbit(v, 22) == 0);
+  assert(getbit(v, 23) == 0);
+
+  bitmask(v, 2);
+  assert(getbit(v, 0) == 1);
+  assert(getbit(v, 1) == 1);
+  assert(getbit(v, 2) == 0);
+}
+
 int main()
 {
   test_bitxor();
@@ -136,5 +154,6 @@ int main()
   test_transpose_endianness();
   test_biteq();
   test_bitmatrix();
+  test_bitmask();
   return 0;
 }

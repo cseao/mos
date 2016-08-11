@@ -8,14 +8,15 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
-static uint8_t *choices;
+static bitmatrix_t choices;
 static bitmatrix_t T;
+
 
 static void receiver_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
   bitmatrix_t t = new_bitmatrix(SSEC, code->n);
-  uint8_t w[SSEC];
+  uint8_t w[SSEC][octs(code->k)];
 
   /* Read μs from the network */
   for (int i = 0; i < SSEC; ++i) {
@@ -23,14 +24,14 @@ static void receiver_check(const int sockfd, const size_t m)
     prgbits(row(mu, i), m);
     /* Initialize checks to base otp */
     bitcpy(row(t, i), row(T, m+i), code->n);
-    w[i] = choices[m + i];
+    bitcpy(w[i], row(choices, m+i), code->k);
   }
 
   /* Compute check values */
   for (size_t j = 0; j < m; ++j) {
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(row(mu, i), j)) {
-        w[i] ^= choices[j];
+        bitxor_small(w[i], row(choices, j), code->k);
         bitxor(row(t, i), row(T, j), code->n);
       }
     }
@@ -67,11 +68,11 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   bitmatrix_t C = new_bitmatrix(ms, code->n);
-  choices = malloc(ms * sizeof(*choices));
-  randombits(choices, ms * 8);
+  choices = new_bitmatrix(ms, code->k);
+  randombits(choices.M, ms * code->k);
   for (size_t i = 0; i < ms; ++i) {
-    choices[i] &= codewordsm;
-    encode(code, row(C, i), &choices[i]);
+    bitmask(row(choices, i), codewordsm);
+    encode(code, row(C, i), row(choices, i));
   }
 
   bitmatrix_t CT = new_bitmatrix(code->n, ms);
@@ -103,8 +104,8 @@ void kk_receiver(int sockfd, size_t m) {
 #endif
   }
 
-  free(choices);
   free(u);
+  free_bitmatrix(choices);
   free_bitmatrix(CT);
   free_bitmatrix(T);
 }

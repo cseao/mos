@@ -17,7 +17,7 @@ static void sender_check(const int sockfd, const size_t m)
   uint8_t q[SSEC][octs(code->n)];
   uint8_t t[SSEC][octs(code->n)];
   uint8_t c[SSEC][octs(code->n)];
-  uint8_t w[SSEC];
+  uint8_t w[SSEC][octs(code->k)];
   for (int i = 0; i < SSEC; ++i) {
     randombits(row(mu, i), KAPPA);
     writebits(sockfd, row(mu, i), KAPPA);
@@ -36,11 +36,11 @@ static void sender_check(const int sockfd, const size_t m)
 
   for (int i = 0; i < SSEC; ++i) {
     readbits(sockfd, t[i], code->n);
-    readbits(sockfd, &w[i], code->k);
+    readbits(sockfd, w[i], code->k);
     // if (w[i] & ~codewordsm) {
     //   PROTOCOL_ABORT();
     // }
-    encode(code, c[i], &w[i]);
+    encode(code, c[i], w[i]);
     bitxor(q[i], t[i], code->n);
     bitand(c[i], delta, code->n);
 

@@ -10,6 +10,7 @@ typedef uint128_t uint256_t[2];
 void Bprint(const uint8_t *v, size_t n);
 void transpose(void *dst, const void *src, size_t m, size_t n);
 void bitxor(void *_a, const void *_b, size_t n);
+void bitxor_small(void *_a, const void *_b, size_t n);
 void bitand(void *_a, const void *_b, size_t n);
 bool biteq(const void *_a, const void *_b, size_t n);
 uint8_t getbit(const void *_v, size_t pos);
@@ -22,6 +23,11 @@ uint8_t getbit(const void *_v, size_t pos);
 #define octs(bits)              (bits >> 3)
 #define u8(bits)                (bits >> 3)
 #define bitcell(M, row, col)    ((const uint8_t *) M + row * (col >> 3))
+
+
+#define bitmask(v, bits)                                        \
+  ((uint8_t *) v)[(bits) >> 3] &= (1 << ((bits) % 8)) - 1
+
 
 typedef struct bitmatrix {
   uint8_t *M;

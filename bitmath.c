@@ -90,6 +90,17 @@ void bitxor(void *_a, const void *_b, size_t n)
 }
 
 
+void bitxor_small(void *_a, const void *_b, size_t n)
+{
+  uint8_t *a = (uint8_t *) _a;
+  uint8_t *b = (uint8_t *) _b;
+  n >>= 3;
+  while (n--) {
+    *a ^= *b;
+    a++; b++;
+  }
+}
+
 /**
  * Compute fast bitwise and between two bit-vectors a, b of n bits,
  * where n is a multiple of 128.
