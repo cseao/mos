@@ -25,7 +25,7 @@ uint8_t getbit(const void *_v, size_t pos);
 
 typedef struct bitmatrix {
   uint8_t *M;
-  const size_t offset;
+  size_t offset;
 } bitmatrix_t;
 
 #define new_bitmatrix(rows, cols)               \
