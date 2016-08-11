@@ -11,9 +11,10 @@
 
 
 static uint8_t *delta;
+static bitmatrix_t QT;
 
 static void
-sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
+sender_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
   uint8_t q[SSEC][octs(CODEN)];
@@ -25,13 +26,13 @@ sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
     writebits(sockfd, row(mu, i), KAPPA);
     prgbits(row(mu, i), m);
 
-    bitcpy(q[i], QT[m + i], CODEN);
+    bitcpy(q[i], row(QT, m+i), CODEN);
   }
 
   for (size_t j = 0; j < m; ++j) {
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(row(mu, i), j)) {
-        bitxor(q[i], QT[j], CODEN);
+        bitxor(q[i], row(QT, j), CODEN);
       }
     }
   }
@@ -74,25 +75,25 @@ void kk_sender(int sockfd, size_t m)
   }
 
   baseot_receiver(sockfd, CODEN, unpacked_delta, p[1]);
-  uint8_t (*Q)[octs(ms)] = malloc(CODEN * sizeof(*Q));
+  bitmatrix_t Q = new_bitmatrix(CODEN, ms);
   for (size_t i = 0; i < CODEN; ++i) {
-    readbits(p[0], Q[i], KAPPA);
-    prgbits(Q[i], ms);
+    readbits(p[0], row(Q, i), KAPPA);
+    prgbits(row(Q, i), ms);
   }
 
   uint8_t *u = bitalloc(ms);
   for (size_t i = 0; i < CODEN; ++i) {
     readbits(sockfd, u, ms);
     if (unpacked_delta[i]) {
-      bitxor(Q[i], u, ms);
+      bitxor(row(Q, i), u, ms);
     }
   }
 
-  uint8_t (*QT)[octs(CODEN)] = malloc(ms * sizeof(*QT));
-  transpose(QT, Q, CODEN, ms);
+  QT = new_bitmatrix(ms, CODEN);
+  transpose(QT.M, Q.M, CODEN, ms);
 
   if (active_security) {
-    sender_check(sockfd, QT, m);
+    sender_check(sockfd, m);
   }
 
   uint8_t c[octs(CODEN)];
@@ -103,7 +104,7 @@ void kk_sender(int sockfd, size_t m)
       // XXX. also here intrinsics fucks up
       bitcpy(c, codewords[i], CODEN);
       bitand(q_j.q, c, CODEN);
-      bitxor(q_j.q, QT[q_j.j], CODEN);
+      bitxor(q_j.q, row(QT, q_j.j), CODEN);
       base_hash((void *) &q_j, sizeof(q_j));
 #ifndef NDEBUG
       Bprint(q_j.q, octs(KAPPA));
@@ -114,7 +115,7 @@ void kk_sender(int sockfd, size_t m)
     printf("\n");
 #endif
   }
-  free(Q);
-  free(QT);
+  free_bitmatrix(Q);
+  free_bitmatrix(QT);
   free(u);
 }
