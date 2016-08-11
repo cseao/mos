@@ -1,4 +1,3 @@
-#include <fcntl.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <stddef.h>
