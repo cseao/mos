@@ -9,10 +9,10 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
-
+static uint8_t *choices;
 
 static void
-receiver_check(const int sockfd,  uint8_t *choices, uint8_t (*T)[octs(CODEN)], const size_t m)
+receiver_check(const int sockfd,  uint8_t (*T)[octs(CODEN)], const size_t m)
 {
   uint8_t (*mu)[octs(m)] = malloc(SSEC * sizeof(*mu));
   uint8_t w[SSEC];
@@ -67,7 +67,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   uint8_t (*C)[octs(CODEN)] = malloc(ms * sizeof(*C));
-  uint8_t *choices = malloc(ms * sizeof(*choices));
+  choices = malloc(ms * sizeof(*choices));
   randombytes(choices, ms);
   for (size_t i = 0; i < ms; ++i) {
     choices[i] &= codewordsm;
@@ -91,7 +91,7 @@ void kk_receiver(int sockfd, size_t m) {
   free(T1);
 
   if (active_security) {
-    receiver_check(sockfd, choices, T, m);
+    receiver_check(sockfd, T, m);
   }
 
   uint8_t pad[octs(KAPPA)];

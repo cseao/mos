@@ -9,8 +9,11 @@
 #include "bitmath.h"
 #include "libot/ot.h"
 
+
+static uint8_t *delta;
+
 static void
-sender_check(const int sockfd, uint8_t delta[octs(CODEN)], uint8_t (*QT)[octs(CODEN)], const size_t m)
+sender_check(const int sockfd, uint8_t (*QT)[octs(CODEN)], const size_t m)
 {
   uint8_t (*mu)[octs(m)] = malloc(SSEC * sizeof(*mu));
   uint8_t q[SSEC][octs(CODEN)];
@@ -63,7 +66,7 @@ void kk_sender(int sockfd, size_t m)
   size_t ms = active_security? m + SSEC : m;
 
   /* Perform the base OTs, extends them and place those in a matrix Q. */
-  uint8_t delta[octs(CODEN)];
+  delta = bitalloc(CODEN);
   uint8_t unpacked_delta[CODEN];
   randombytes(delta, octs(CODEN));
   for (size_t i = 0; i < CODEN; ++i) {
@@ -89,7 +92,7 @@ void kk_sender(int sockfd, size_t m)
   transpose(QT, Q, CODEN, ms);
 
   if (active_security) {
-    sender_check(sockfd, delta, QT, m);
+    sender_check(sockfd, QT, m);
   }
 
   uint8_t c[octs(CODEN)];
