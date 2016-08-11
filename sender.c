@@ -37,9 +37,6 @@ static void sender_check(const int sockfd, const size_t m)
   for (int i = 0; i < SSEC; ++i) {
     readbits(sockfd, t[i], code->n);
     readbits(sockfd, w[i], code->k);
-    // if (w[i] & ~codewordsm) {
-    //   PROTOCOL_ABORT();
-    // }
     encode(code, c[i], w[i]);
     bitxor(q[i], t[i], code->n);
     bitand(c[i], delta, code->n);

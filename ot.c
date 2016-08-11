@@ -115,7 +115,7 @@ const char help_message[] =
 "-h --help                      Shows this screen.\n"
 "-m INT                         Number of OTs [default: 1e6].\n"
 "-H HOST, --host HOST           IP-address [default: localhost].\n"
-"-p INT, --port INT             IP-port [default: 7766].\n"
+"-p INT, --port INT             IP-port [default: 1337].\n"
 "-n INT, --out-of INT           Do 1-out-of-n oblivious transfer\n"
 "-a, --active                   Perform active-security checks.\n"
 "";
