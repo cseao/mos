@@ -33,7 +33,7 @@ code_t wh = {
 };
 
 
-void encode(const code_t *code, uint8_t *c, uint8_t *word)
+void encode(const code_t *code, void *c, void *word)
 {
   const uint32_t n = code->n;
   uint8_t g[octs(n)];

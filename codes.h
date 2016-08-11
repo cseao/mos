@@ -14,4 +14,4 @@ typedef struct code {
 code_t repetition;
 code_t wh;
 
-void encode(const code_t* code, uint8_t *c, uint8_t *word);
+void encode(const code_t* code, void *c, void *word);
