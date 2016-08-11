@@ -88,7 +88,6 @@ void kk_sender(int sockfd, size_t m)
     sender_check(sockfd, m);
   }
 
-  uint8_t blob[octs(code->n) + sizeof(size_t)];
   uint8_t q[octs(code->n)];
   size_t j;
   for (j = 0; j < m; ++j) {
@@ -97,11 +96,9 @@ void kk_sender(int sockfd, size_t m)
       bitand(q, delta, code->n);
       bitxor(q, row(QT, j), code->n);
 
-      bitcpy(blob, q, code->n);
-      memcpy(blob + octs(code->n), &j, sizeof(size_t));
-      base_hash(blob, sizeof(blob));
+      hash(q, q, j, octs(code->n));
 #ifndef NDEBUG
-      Bprint(blob, octs(KAPPA));
+      Bprint(q, octs(KAPPA));
       printf("\t");
 #endif
     }

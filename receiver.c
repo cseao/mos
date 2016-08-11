@@ -97,7 +97,7 @@ void kk_receiver(int sockfd, size_t m) {
 
   uint8_t pad[octs(KAPPA)];
   for (size_t j = 0; j < m; ++j) {
-    hash(pad, row(T, j), j, octs(code->n), octs(KAPPA));
+    hash(pad, row(T, j), j, octs(code->n));
 #ifndef NDEBUG
     Bprint(pad, octs(KAPPA));
     printf("\n");

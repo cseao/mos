@@ -4,6 +4,7 @@
 #include <blake2.h>
 
 #include "libot/ot.h"
+#include "bitmath.h"
 
 /**
  * Extends `out` to `to` bytes in blocks of HASHBYTES.
@@ -34,11 +35,11 @@ void hash(uint8_t *out, uint8_t *in, const size_t j, const size_t inlen)
   memcpy(inj, in, inlen);
   memcpy(inj + inlen, &j, jsize);
 
-  blake2(out, inj, NULL, KAPPA/8, inlen + jsize, 0);
+  blake2(out, inj, NULL, octs(KAPPA), inlen + jsize, 0);
 }
 
 
 void base_hash(void *in, const size_t inlen)
 {
-  blake2(in, in, NULL, KAPPA/8, inlen, 0);
+  blake2(in, in, NULL, octs(KAPPA), inlen, 0);
 }
