@@ -1,8 +1,7 @@
 CC?=cc
 CFLAGS+=-mavx -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99 -g
 
-PROTOCOLS= std.o kk.o
-OBJS= ot.o bitmath.o oracle.o $(PROTOCOLS)
+OBJS= ot.o bitmath.o oracle.o std.o otext.o sender.o receiver.o
 
 all: ot
 
