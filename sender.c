@@ -95,14 +95,12 @@ void kk_sender(int sockfd, size_t m)
     sender_check(sockfd, m);
   }
 
-  uint8_t c[octs(code->n)];
   struct {uint8_t q[octs(CODEN)]; size_t j; } q_j;
   for (q_j.j = 0; q_j.j < m; ++q_j.j) {
     for (uint8_t i = 0; i < codewordsn; i++) {
-      bitcpy(q_j.q, delta, code->n);
       // XXX. also here intrinsics fucks up
-      encode(code, c, &i);
-      bitand(q_j.q, c, code->n);
+      encode(code, q_j.q, &i);
+      bitand(q_j.q, delta, code->n);
       bitxor(q_j.q, row(QT, q_j.j), code->n);
       base_hash((void *) &q_j, sizeof(q_j));
 #ifndef NDEBUG
