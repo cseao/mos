@@ -76,7 +76,7 @@ void transpose(void *dst, const void *src, size_t m, size_t n)
 /**
  * Compute fast bitwise xor between two bit-vectors a, b of n bits,
  * where n is a multiple of 128.
- * Places the result in a.
+ * Place the result in a.
  */
 void bitxor(void *_a, const void *_b, size_t n)
 {
@@ -93,7 +93,7 @@ void bitxor(void *_a, const void *_b, size_t n)
 /**
  * Compute fast bitwise and between two bit-vectors a, b of n bits,
  * where n is a multiple of 128.
- * Places the result in a.
+ * Place the result in a.
  */
 void bitand(void *_a, const void *_b, size_t n)
 {

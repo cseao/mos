@@ -36,7 +36,7 @@ sender_check(const int sockfd, uint8_t delta[CODEN/8], uint8_t (*QT)[CODEN/8], c
     memcpy(q[i], QT[m + i], CODEN/8);
   }
 
-  for (size_t j = 0; j < m; j++) {
+  for (size_t j = 0; j < m; ++j) {
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(mu[i], j)) {
         bitxor(q[i], QT[j], CODEN);
@@ -102,7 +102,6 @@ void kk_sender(int sockfd, size_t m)
   if (active_security) {
     sender_check(sockfd, delta, QT, m);
   }
-
   struct {uint8_t q[CODEN/8]; size_t j; } q_j;
   for (q_j.j = 0; q_j.j < m; ++q_j.j) {
     for (size_t i = 0; i < codewordsn; i++) {
@@ -209,7 +208,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   uint8_t pad[KAPPA/8];
-  for (size_t j = 0; j < m; j++) {
+  for (size_t j = 0; j < m; ++j) {
     hash(pad, T[j], j, CODEN/8, KAPPA/8);
 #ifndef NDEBUG
     Bprint(pad, KAPPA/8);

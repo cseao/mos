@@ -89,6 +89,7 @@ void test_bitxor()
   assert(biteq(a, c, 256));
 }
 
+
 void test_bitand()
 {
   uint8_t a[256/8];
