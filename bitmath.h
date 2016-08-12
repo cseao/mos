@@ -20,7 +20,7 @@ uint8_t getbit(const void *_v, size_t pos);
  * The minimum number of octets needed in order to store `bits`.
  */
 //#define octs(bits)  (bits >> 3)
-#define octs(bits)    ((bits) >> 3) + ((bits) % 8 != 0)
+#define octs(bits)    (((bits) >> 3) + ((bits) % 8 != 0))
 
 
 /**
@@ -37,8 +37,6 @@ uint8_t getbit(const void *_v, size_t pos);
 #define bitcpy(dest, src, bits) memcpy(dest, src, octs(bits))
 // XXX. TODO: make this a call to malloc() instead, we shouldn't need initialization.
 #define bitalloc(bits)          calloc(octs(bits), sizeof(uint8_t))
-
-#define bitcell(M, row, col)    ((const uint8_t *) M + row * octs(col))
 
 #define bitmask(v, bits)                                        \
   ((uint8_t *) v)[(bits) >> 3] &= (1 << ((bits) % 8)) - 1
@@ -57,5 +55,6 @@ typedef struct bitmatrix {
 
 #define free_bitmatrix(NAME)                    \
   free(NAME.M)
+
 #define row(bm, i)                              \
   bm.M + (i) * bm.offset

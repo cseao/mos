@@ -35,6 +35,7 @@ code_t wh = {
 
 void encode(const code_t *code, void *c, void *word)
 {
+#define bitcell(M, size, nmemb)    ((const uint8_t *) M + size * octs(nmemb))
   const uint32_t n = code->n;
   uint8_t g[octs(n)];
 
