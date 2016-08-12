@@ -16,8 +16,7 @@ void Bprint(const uint8_t *v, size_t n)
   }
 }
 
-void
-sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
+void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
 {
 #   define INP(x,y) inp[(x)*ncols/8 + (y)/8]
 #   define OUT(x,y) out[(y)*nrows/8 + (x)/8]
@@ -57,15 +56,6 @@ sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
     OUT(rr, cc + i) = _mm_movemask_epi8(tmp.x);
 }
 
-/**
- * Compute in-place transpose of a matrix of (m x n) bits.
- */
-void transpose(void *dst, const void *src, size_t m, size_t n)
-{
-  const uint8_t *A = src;
-  uint8_t *B = dst;
-  sse_trans(A, B, m, n);
-}
 
 
 void bitxor_small(void *_a, const void *_b, size_t n)

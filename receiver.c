@@ -76,7 +76,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   bitmatrix_t CT = new_bitmatrix(code->n, ms);
-  transpose(CT.M, C.M, ms, code->n);
+  transpose(&CT, &C, ms, code->n);
   free_bitmatrix(C);
 
   uint8_t *u = bitalloc(ms);
@@ -88,7 +88,7 @@ void kk_receiver(int sockfd, size_t m) {
   }
 
   T = new_bitmatrix(ms, code->n);
-  transpose(T.M, T0.M, code->n, ms);
+  transpose(&T, &T0, code->n, ms);
   free_bitmatrix(T0);
   free_bitmatrix(T1);
 

@@ -15,57 +15,62 @@ void setbit(void *_v, size_t pos, bool bit)
 
 void test_transpose_identity()
 {
-  uint8_t m[8];
+  bitmatrix_t m = new_bitmatrix(8, 8);
 
   for (size_t i=0; i != 8; ++i) {
-    setbit(m, i*8 + i, 1);
+    setbit(m.M, i*8 + i, 1);
   }
 
-  assert(getbit(m, 0) == 1);
-  assert(getbit(m, 1) == 0);
-  transpose(m, m, 8, 8);
-  assert(getbit(m, 0) == 1);
-  assert(getbit(m, 1) == 0);
+  assert(getbit(m.M, 0) == 1);
+  assert(getbit(m.M, 1) == 0);
+  transpose(&m, &m, 8, 8);
+  assert(getbit(m.M, 0) == 1);
+  assert(getbit(m.M, 1) == 1);
 }
 
 void test_transpose()
 {
-  uint256_t m[256];
-  memset(m, 0, sizeof(m));
-  setbit(m, 0, 1);
-  setbit(m, 1, 1);
-  setbit(m, 2, 1);
-  setbit(m, 3, 1);
-  transpose(m, m, 256, 256);
-  assert(getbit(m, 0) == 1);
-  assert(getbit(m, 1) == 0);
-  assert(getbit(m, 256 * 1) == 1);
-  assert(getbit(m, 256 * 2) == 1);
+  bitmatrix_t m = new_bitmatrix(256, 256);
+  bitset_zero(m.M, 256*256);
+  setbit(m.M, 0, 1);
+  setbit(m.M, 1, 1);
+  setbit(m.M, 2, 1);
+  setbit(m.M, 3, 1);
+  transpose(&m, &m, 256, 256);
+  assert(getbit(m.M, 0) == 1);
+  assert(getbit(m.M, 1) == 0);
+  assert(getbit(m.M, 256 * 1) == 1);
+  assert(getbit(m.M, 256 * 2) == 1);
+  free_bitmatrix(m);
 
-  uint8_t A[8];
-  uint8_t B[8];
+  bitmatrix_t A = new_bitmatrix(8, 8);
+  bitmatrix_t B = new_bitmatrix(8, 8);
   int r = open("/dev/urandom", O_RDONLY);
-  read(r, A, 8);
-  transpose(B, A, 8, 8);
+  read(r, A.M, 8);
+  transpose(&B, &A, 8, 8);
   for (size_t i = 0; i < 8; i++) {
     for (size_t j = 0; j < 8; j ++) {
-      assert(getbit(A, i * 8 + j) == getbit(B, j * 8 + i));
+      assert(getbit(A.M, i * 8 + j) == getbit(B.M, j * 8 + i));
     }
   }
+  free_bitmatrix(A);
+  free_bitmatrix(B);
 
   size_t Crows = 1 << 10;
   size_t Ccols = 256;
-  uint8_t C[Crows][Ccols/8];
-  uint8_t CT[Ccols][Crows/8];
+  bitmatrix_t C = new_bitmatrix(Crows, Ccols);
+  bitmatrix_t CT = new_bitmatrix(Ccols, Crows);
   for (size_t i = 0; i < Crows; ++i) {
-    read(r, C[i], Ccols/8);
+    read(r, row(C, i), Ccols/8);
   }
-  transpose(CT, C, Crows, Ccols);
+  transpose(&CT, &C, Crows, Ccols);
   for (size_t i = 0; i < Crows; i++) {
     for (size_t j = 0; j < Ccols; j++) {
-      assert(getbit(C, i * Ccols + j) == getbit(CT, j * Crows + i));
+      assert(getbit(C.M, i * Ccols + j) == getbit(CT.M, j * Crows + i));
     }
   }
+  free_bitmatrix(C);
+  free_bitmatrix(CT);
   /* for (size_t i = 0; i < 8; i++) { */
   /*   printf("%.2X\t%.2X\n", A[i], B[i]); */
   /* } */
@@ -73,10 +78,11 @@ void test_transpose()
 
 void test_transpose_endianness()
 {
-  uint8_t m[8];
-  m[0] = 0x0f;
-  assert(getbit(m, 0) == 1);
-  transpose(m, m, 8, 8);
+  bitmatrix_t m = new_bitmatrix(8, 8);
+  *row(m, 0) = 0x0f;
+  assert(getbit(m.M, 0) == 1);
+  transpose(&m, &m, 8, 8);
+  free_bitmatrix(m);
   // ??
 }
 

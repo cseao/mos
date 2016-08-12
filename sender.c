@@ -82,7 +82,7 @@ void kk_sender(int sockfd, size_t m)
   }
 
   QT = new_bitmatrix(ms, code->n);
-  transpose(QT.M, Q.M, code->n, ms);
+  transpose(&QT, &Q, code->n, ms);
 
   if (active_security) {
     sender_check(sockfd, m);

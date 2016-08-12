@@ -5,11 +5,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+void Bprint(const uint8_t *v, size_t n);
+
 typedef __uint128_t uint128_t;
 typedef uint128_t uint256_t[2];
-
-void Bprint(const uint8_t *v, size_t n);
-void transpose(void *dst, const void *src, size_t m, size_t n);
 
 /**
  * Compute fast bitwise xor between two bit-vectors a, b of n bits,
@@ -116,4 +115,17 @@ typedef struct bitmatrix {
   free(NAME.M)
 
 #define row(bm, i)                              \
-  bm.M + (i) * bm.offset
+  (bm.M + (i) * bm.offset)
+
+
+void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols);
+
+/**
+ * Compute in-place transpose of a matrix of (m x n) bits.
+ */
+static inline void transpose(bitmatrix_t *dst, bitmatrix_t const * src, size_t m, size_t n)
+{
+  const uint8_t *A = (uint8_t *) src->M;
+  uint8_t *B = (uint8_t *) dst->M;
+  __sse_trans(A, B, m, n);
+}
