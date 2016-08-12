@@ -57,12 +57,6 @@ sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
     OUT(rr, cc + i) = _mm_movemask_epi8(tmp.x);
 }
 
-uint8_t getbit(const void *_v, size_t pos)
-{
-  const uint8_t *v = _v;
-  return (v[pos >> 3] & (1 << (pos % 8))) != 0;
-}
-
 /**
  * Compute in-place transpose of a matrix of (m x n) bits.
  */
@@ -71,22 +65,6 @@ void transpose(void *dst, const void *src, size_t m, size_t n)
   const uint8_t *A = src;
   uint8_t *B = dst;
   sse_trans(A, B, m, n);
-}
-
-/**
- * Compute fast bitwise xor between two bit-vectors a, b of n bits,
- * where n is a multiple of 128.
- * Place the result in a.
- */
-void bitxor(void *_a, const void *_b, size_t n)
-{
-  __m128i *a = (__m128i *) _a;
-  __m128i *b = (__m128i *) _b;
-  n >>= 7;
-  while (n--) {
-    *a = _mm_xor_si128(*a, *b);
-    ++a; ++b;
-  }
 }
 
 
@@ -99,40 +77,4 @@ void bitxor_small(void *_a, const void *_b, size_t n)
     *a ^= *b;
     a++; b++;
   }
-}
-
-/**
- * Compute fast bitwise and between two bit-vectors a, b of n bits,
- * where n is a multiple of 128.
- * Place the result in a.
- */
-void bitand(void *_a, const void *_b, size_t n)
-{
-  __m128i *a = (__m128i *) _a;
-  __m128i *b = (__m128i *) _b;
-  n >>= 7;
-  while (n--) {
-    *a = _mm_and_si128(*a, *b);
-    ++a; ++b;
-  }
-}
-
-/**
- * Compute fast equality between two bit-vectors a, b of n bits,
- * where n is a multiple of 128.
- */
-bool biteq(const void *_a, const void *_b, size_t n)
-{
-  __m128i *a = (__m128i *) _a;
-  __m128i *b = (__m128i *) _b;
-  __m128i iseq;
-  n >>= 7;
-  while (n--) {
-    iseq = _mm_cmpeq_epi8(*a, *b);
-    if (_mm_movemask_epi8(iseq) != 0xffff) {
-      return false;
-    }
-    ++a; ++b;
-  }
-  return true;
 }

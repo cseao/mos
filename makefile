@@ -1,11 +1,12 @@
 CC?=cc
 CFLAGS+=-mavx -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99 -g
 
+HEADERS=bitmath.h codes.h otext.h oracle.h
 OBJS= ot.o bitmath.o oracle.o std.o sender.o receiver.o codes.o
 
 all: ot
 
-ot: libot $(OBJS)
+ot: libot $(OBJS) $(HEADERS)
 	$(CC) $(CFLAGS) $(OBJS) -L libot -lot -lb2 -o ot
 
 libot:
@@ -22,10 +23,10 @@ clean:
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-bitmath_test: bitmath.o bitmath_test.o
+bitmath_test: bitmath.o bitmath.h bitmath_test.o
 	$(CC) $(CFLAGS) bitmath.o bitmath_test.o -o bitmath_test
 
-codes_test: codes.o codes_test.o bitmath.o
+codes_test: codes.o codes.h codes_test.o bitmath.o
 	$(CC) $(CFLAGS) codes.o codes_test.o bitmath.o -o codes_test
 
 bench: bitmath.o codes.o codes_bench.o
