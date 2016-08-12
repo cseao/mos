@@ -89,10 +89,11 @@ void kk_sender(int sockfd, size_t m)
   }
 
   uint8_t q[octs(code->n)];
-  size_t j;
-  for (j = 0; j < m; ++j) {
-    for (uint8_t i = 0; i < codewordsn; i++) {
-      encode(code, q, &i);
+  uint8_t w[octs(code->k)];
+  for (size_t j = 0; j < m; ++j) {
+    bitset_zero(w, code->k);
+    for (size_t i = 0; i < codewordsn; i++) {
+      encode(code, q, w);
       bitand(q, delta, code->n);
       bitxor(q, row(QT, j), code->n);
 
@@ -101,6 +102,7 @@ void kk_sender(int sockfd, size_t m)
       Bprint(q, octs(KAPPA));
       printf("\t");
 #endif
+      next_word(w);
     }
 #ifndef NDEBUG
     printf("\n");

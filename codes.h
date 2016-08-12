@@ -18,3 +18,5 @@ code_t wh;
 void encode(const code_t* code, void *c, const void *word);
 void load_code(code_t * code);
 void unload_code(code_t * code);
+
+void next_word(uint8_t *v);

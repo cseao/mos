@@ -58,10 +58,34 @@ void test_encode_wh()
   unload_code(&wh);
 }
 
+
+void test_next_word()
+{
+  uint8_t a[4] = {0};
+  next_word(a);
+  assert(a[0] = 0x01);
+  next_word(a);
+  assert(a[0] == 0x02);
+
+  a[0] = 0xff;
+  next_word(a);
+  assert(a[0] == 0x00);
+  assert(a[1] == 0x01);
+  next_word(a);
+  assert(a[0] == 0x01 && a[1] == 0x01);
+
+  a[0] = 0xff;
+  a[1] = 0x7f;
+  next_word(a);
+  assert(a[0] == 0x00 && a[1] == 0x80);
+}
+
+
 int main()
 {
   test_encode_repetition();
   test_encode_wh();
+  test_next_word();
 
   return 0;
 }
