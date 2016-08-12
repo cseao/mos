@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -22,32 +23,52 @@ code_t repetition = {
   .name = "REP",
   .n = 128,
   .k = 1,
-  .G = "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff",
+  .file = "repetition.code",
 };
 
 code_t wh = {
   .name = "WH",
   .n = 256,
   .k = 8,
-  .G = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU33333333333333333333333333333333\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\xff\xff\x00\x00\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff",
+  .file = "wh.code",
 };
 
+void load_code(code_t *code)
+{
+  const size_t Gsize = octs(code->n) * code->k;
+  size_t Gread;
 
-void encode(const code_t *code, void *c, void *word)
+  FILE *Gfile = fopen(code->file, "r");
+  if (!Gfile) {
+    perror("Cannot open code file.");
+    exit(EXIT_FAILURE);
+  }
+
+  code->_G = malloc(Gsize);
+  Gread = fread(code->_G, sizeof(uint8_t), Gsize, Gfile);
+  if (Gread < Gsize) {
+    fprintf(stderr, "Error reading file!\n");
+    // XXX. free memory, return error.
+    exit(EXIT_FAILURE);
+  }
+  fclose(Gfile);
+}
+
+
+void unload_code(code_t *code)
+{
+  free(code->_G);
+}
+
+void encode(const code_t *code, void *c, const void *word)
 {
 #define bitcell(M, size, nmemb)    ((const uint8_t *) M + size * octs(nmemb))
   const uint32_t n = code->n;
-  uint8_t g[octs(n)];
 
   bitset_zero(c, n);
   for (size_t i = 0; i < code->k; ++i) {
     if (getbit(word, i)) {
-      // it looks like instrinsics fucks up if we give a read-only vector like
-      // the one initialized in the structure.
-      // XXX
-      // Probabily best to have a constructor to avoid a vector copy every time…
-      bitcpy(g, bitcell(code->G, i, n), n);
-      bitxor(c, g, n);
+      bitxor(c, bitcell(code->_G, i, n), n);
     }
   }
 }

@@ -10,11 +10,14 @@
 
 void test_encode_repetition()
 {
+  load_code(&repetition);
+
   uint8_t *zero = (uint8_t *) "\x00";
   uint8_t zero_codeword[octs(repetition.n)];
   uint8_t got[octs(repetition.n)];
 
   bitset_one(got, repetition.n);
+  bitset_zero(zero_codeword, repetition.n);
   assert(!biteq(got, zero_codeword, repetition.n));
   encode(&repetition, got, zero);
   assert(biteq(got, zero_codeword, repetition.n));
@@ -24,10 +27,14 @@ void test_encode_repetition()
   bitset_one(one_codeword, repetition.n);
   encode(&repetition, got, one);
   assert(biteq(got, one_codeword, repetition.n));
+
+  unload_code(&repetition);
 }
 
 void test_encode_wh()
 {
+  load_code(&wh);
+
   uint8_t *zero = (uint8_t *) "\x00";
   uint8_t zero_codeword[octs(wh.n)];
   uint8_t got[octs(wh.n)];
@@ -47,11 +54,14 @@ void test_encode_wh()
   bitset_zero(got, wh.n);
   encode(&wh, got, w);
   assert(biteq(got, expected, wh.n));
+
+  unload_code(&wh);
 }
 
 int main()
 {
   test_encode_repetition();
   test_encode_wh();
+
   return 0;
 }

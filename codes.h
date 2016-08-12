@@ -6,13 +6,15 @@ typedef struct code {
 
   const uint32_t n;
   const uint32_t k;
+  const char *file;
 
-  const void *G;
+  void *_G;
 } code_t;
 
 
 code_t repetition;
 code_t wh;
 
-void encode(const code_t* code, void *c, void *word);
-code_t *code_from_string(const char *s);
+void encode(const code_t* code, void *c, const void *word);
+void load_code(code_t * code);
+void unload_code(code_t * code);

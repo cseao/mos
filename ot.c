@@ -203,6 +203,7 @@ int main(int argc, char **argv)
     nOTs += 128 - (nOTs + SSEC) % 128;
   }
 
+  load_code(code);
   if (!strcmp("sender", role))  {
     sender_main(port);
   } else if (!strcmp("receiver", role)) {
@@ -212,6 +213,7 @@ int main(int argc, char **argv)
   } else {
     usage();
   }
+  unload_code(code);
 
   return 0;
 }
