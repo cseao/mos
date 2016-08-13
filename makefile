@@ -6,7 +6,7 @@ OBJS= ot.o bitmath.o oracle.o std.o sender.o receiver.o codes.o
 
 all: ot
 
-ot: libot $(OBJS) $(HEADERS)
+ot: libot $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -L libot -lot -lb2 -o ot
 
 libot:
@@ -20,7 +20,7 @@ clean:
 	-rm -f *.o ot
 #	-$(MAKE) clean -C libot/
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $<
 
 bitmath_test: bitmath.o bitmath.h bitmath_test.o
