@@ -97,7 +97,7 @@ uint8_t getbit(const void *_v, size_t pos)
 #define bitalloc(bits)          calloc(octs(bits), sizeof(uint8_t))
 
 #define bitmask(v, bits)                                        \
-  ((uint8_t *) v)[(bits) >> 3] &= (1 << ((bits) % 8)) - 1
+  ((uint8_t *) v)[(bits-1) >> 3] &= (1 << ((bits-1) % 8)) - 1
 
 
 typedef struct bitmatrix {

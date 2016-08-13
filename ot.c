@@ -180,7 +180,6 @@ int main(int argc, char **argv)
       break;
     case 'n':
       /* XXX. here we assume the input will be of the form 2^{optarg} */
-      codewordsm = atoi(optarg) - 1;
       codewordsn = atoi(optarg);
       break;
     case 'a':

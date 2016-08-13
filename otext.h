@@ -14,7 +14,6 @@
   exit(EXIT_FAILURE)
 
 extern bool active_security;
-extern uint8_t codewordsm;
 extern size_t codewordsn;
 extern code_t *code;
 
