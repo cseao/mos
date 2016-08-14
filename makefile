@@ -29,8 +29,14 @@ bitmath_test: bitmath.o bitmath.h bitmath_test.o
 codes_test: codes.o codes.h codes_test.o bitmath.o
 	$(CC) $(CFLAGS) codes.o codes_test.o bitmath.o -o codes_test
 
-bench: bitmath.o codes.o codes_bench.o
+codes_bench: bitmath.o codes.o codes_bench.o
 	$(CC) $(CFLAGS) $^ -o codes_bench
+
+oracle_bench: bitmath.o oracle.o oracle_bench.o
+	$(CC) $(CFLAGS) $^ -lb2  -lot -L libot -o oracle_bench
+
+bench: codes_bench oracle_bench
+	./oracle_bench | pv -s 500m -S > /dev/null
 	./codes_bench < /dev/urandom | pv -s 500m -S > /dev/null
 
 .PHONY: libot clean bitmath_test bench
