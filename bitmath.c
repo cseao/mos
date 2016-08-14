@@ -55,16 +55,3 @@ void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
   for (i = 8; --i >= 0; tmp.x = _mm_slli_epi64(tmp.x, 1))
     OUT(rr, cc + i) = _mm_movemask_epi8(tmp.x);
 }
-
-
-
-void bitxor_small(void *_a, const void *_b, size_t n)
-{
-  uint8_t *a = (uint8_t *) _a;
-  uint8_t *b = (uint8_t *) _b;
-  n >>= 3;
-  while (n--) {
-    *a ^= *b;
-    a++; b++;
-  }
-}
