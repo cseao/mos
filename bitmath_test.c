@@ -147,7 +147,7 @@ void test_bitmask()
 
   bitmask(v, 2);
   assert(getbit(v, 0) == 1);
-  assert(getbit(v, 1) == 1);
+  assert(getbit(v, 1) == 0);
   assert(getbit(v, 2) == 0);
 }
 
