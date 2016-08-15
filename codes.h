@@ -21,4 +21,12 @@ void encode(const code_t* code, void *c, const void *word);
 void load_code(code_t * code);
 void unload_code(code_t * code);
 
-void next_word(uint8_t *v);
+/**
+ *  Increment an arbitrary-length vector by recursively adding 8-bit blocks.
+ *  If a block overflows, increment the next one.
+ */
+static inline
+void next_word(uint8_t *v)
+{
+  if (++(*v) == 0) next_word(++v);
+}

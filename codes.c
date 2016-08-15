@@ -54,13 +54,6 @@ void load_code(code_t *code)
   fclose(Gfile);
 }
 
-
-void next_word(uint8_t *v)
-{
-  if (++(*v) == 0) next_word(++v);
-}
-
-
 void unload_code(code_t *code)
 {
   free_bitmatrix(code->_G);
