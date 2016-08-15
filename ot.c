@@ -176,7 +176,7 @@ int main(int argc, char **argv)
       port = atoi(optarg);
       break;
     case 'm':
-      nOTs = atol(optarg);
+      nOTs = 1 << atol(optarg);
       break;
     case 'n':
       /* XXX. here we assume the input will be of the form 2^{optarg} */
@@ -194,13 +194,12 @@ int main(int argc, char **argv)
     }
   }
 
-  /*
-   * Our internal arithmetic functions assume that the input can always be
-   * splitted in branches of 128 bits, so here we get to the nearest multiple.
-   */
-  if (active_security) {
-    nOTs += 128 - (nOTs + SSEC) % 128;
-  }
+  // XXX.
+  // There's a bug somewhere that produces a segmentation fault when the number
+  // of OTs is not divisible by 128. Right now I don't have enough time to investigate.
+  // Remove the following line to reproduce.
+  // (Note: tests have always been done on multiples of 128 in the past.)
+  if (active_security) nOTs -= (nOTs + SSEC) % 128;
 
   load_code(code);
   if (!strcmp("sender", role))  {
