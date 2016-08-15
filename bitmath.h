@@ -87,7 +87,7 @@ void bitand_m128i(void *_a, const void *_b, size_t n)
 }
 
 /**
- * Compute bitwise xor between to bit-vectors a, b of n bits,
+ * Compute bitwise and between to bit-vectors a, b of n bits,
  * where n is a multiple of 8.
  * Place the result in a.
  */
