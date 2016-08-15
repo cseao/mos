@@ -94,8 +94,9 @@ bitmatrix_t kk_sender(int sockfd, size_t m)
 
   uint8_t q[octs(code->n)];
   uint8_t w[octs(code->k)];
-
   bitmatrix_t V = new_bitmatrix(m * codewordsn, KAPPA);
+
+#pragma omp parallel for private(q, w)
   for (size_t j = 0; j < m; ++j) {
     bitset_zero(w, code->k);
     for (size_t i = 0; i < codewordsn; i++) {
