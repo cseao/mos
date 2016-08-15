@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+#include "bitmath.h"
+
 typedef struct code {
   const char* name;
 
@@ -8,7 +10,7 @@ typedef struct code {
   const uint32_t k;
   const char *file;
 
-  void *_G;
+  bitmatrix_t _G;
 } code_t;
 
 

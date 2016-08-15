@@ -35,7 +35,7 @@ code_t wh = {
 
 void load_code(code_t *code)
 {
-  const size_t Gsize = octs(code->n) * code->k;
+  const size_t Gsize = code->k * octs(code->n);
   size_t Gread;
 
   FILE *Gfile = fopen(code->file, "r");
@@ -44,8 +44,8 @@ void load_code(code_t *code)
     exit(EXIT_FAILURE);
   }
 
-  code->_G = malloc(Gsize);
-  Gread = fread(code->_G, sizeof(uint8_t), Gsize, Gfile);
+  code->_G = new_bitmatrix(code->k, code->n);
+  Gread = fread(code->_G.M, sizeof(uint8_t), Gsize, Gfile);
   if (Gread < Gsize) {
     fprintf(stderr, "Error reading file!\n");
     // XXX. free memory, return error.
@@ -63,18 +63,16 @@ void next_word(uint8_t *v)
 
 void unload_code(code_t *code)
 {
-  free(code->_G);
+  free_bitmatrix(code->_G);
 }
 
 void encode(const code_t *code, void *c, const void *word)
 {
-#define bitcell(M, size, nmemb)    ((const uint8_t *) M + size * octs(nmemb))
-  const uint32_t n = code->n;
+  bitset_zero(c, code->n);
 
-  bitset_zero(c, n);
   for (size_t i = 0; i < code->k; ++i) {
     if (getbit(word, i)) {
-      bitxor(c, bitcell(code->_G, i, n), n);
+      bitxor(c, row(code->_G, i), code->n);
     }
   }
 }
