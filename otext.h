@@ -9,7 +9,7 @@
 #define writebits(from, to, howmany) writing(from, to, octs(howmany))
 #define readbits(from, to, howmany)  reading(from, to, octs(howmany))
 
-#define PROTOCOL_ABORT(MSG)            \
+#define PROTOCOL_ABORT(MSG)                        \
   fprintf(stderr, MSG "\n");           \
   exit(EXIT_FAILURE)
 
@@ -20,5 +20,5 @@ extern code_t *code;
 void std_sender(int sockfd, int nOTs);
 void std_receiver(int sockfd, int nOTs);
 
-void kk_sender(int sockfd, size_t nOTs);
+bitmatrix_t kk_sender(int sockfd, size_t nOTs);
 void kk_receiver(int sockfd, size_t nOTs);

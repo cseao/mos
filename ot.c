@@ -32,6 +32,7 @@ static int sender_main(int port) {
     int sockfd;
     int newsockfd;
     int rcvbuf = BUFSIZE;
+    bitmatrix_t V;
 
     sockfd = server_listen(port);
     newsockfd = server_accept(sockfd);
@@ -43,8 +44,20 @@ static int sender_main(int port) {
     }
 
     START_TIMEIT();
-    kk_sender(newsockfd, nOTs);
+    V = kk_sender(newsockfd, nOTs);
     END_TIMEIT();
+
+#ifndef NDEBUG
+    for (size_t j = 0; j < nOTs; ++j) {
+      for (size_t i = 0; i < codewordsn; i++) {
+        Bprint(row(V, j*codewordsn+i), octs(KAPPA));
+        printf("\t");
+      }
+      printf("\n");
+    }
+#endif
+    free_bitmatrix(V);
+
     printf("%ld OTs sender: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     uint8_t end = 0x42;

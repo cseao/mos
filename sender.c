@@ -51,7 +51,8 @@ static bool sender_check(const int sockfd, const size_t m)
   return pass;
 }
 
-void kk_sender(int sockfd, size_t m)
+
+bitmatrix_t kk_sender(int sockfd, size_t m)
 {
   int p[2];
   if (pipe(p) == -1) {
@@ -93,6 +94,8 @@ void kk_sender(int sockfd, size_t m)
 
   uint8_t q[octs(code->n)];
   uint8_t w[octs(code->k)];
+
+  bitmatrix_t V = new_bitmatrix(m * codewordsn, KAPPA);
   for (size_t j = 0; j < m; ++j) {
     bitset_zero(w, code->k);
     for (size_t i = 0; i < codewordsn; i++) {
@@ -100,19 +103,14 @@ void kk_sender(int sockfd, size_t m)
       bitand(q, delta, code->n);
       bitxor(q, row(QT, j), code->n);
 
-      hash(q, q, j, octs(code->n));
-#ifndef NDEBUG
-      Bprint(q, octs(KAPPA));
-      printf("\t");
-#endif
+      hash(row(V, j*codewordsn + i), q, j, octs(code->n));
       next_word(w);
     }
-#ifndef NDEBUG
-    printf("\n");
-#endif
   }
   free_bitmatrix(Q);
   free_bitmatrix(QT);
   free(u);
   free(delta);
+
+  return V;
 }
