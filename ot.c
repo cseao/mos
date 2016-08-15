@@ -21,7 +21,7 @@ code_t *code = &wh;
 
 #define START_TIMEIT()                                          \
   struct timeval __start, __end; gettimeofday(&__start, NULL)
-#define END_TIMEIT()          \
+#define END_TIMEIT()                                                    \
   gettimeofday(&__end, NULL);                                           \
   double __sdiff = (__end.tv_sec - __start.tv_sec), __udiff = (__end.tv_usec - __start.tv_usec)
 #define GET_TIMEIT()                            \
@@ -115,7 +115,7 @@ const char help_message[] =
 "\n"
 "Options:\n"
 "-h --help                      Shows this screen.\n"
-"-m INT                         Number of OTs [default: 1e6].\n"
+"-m INT                         log2 number of OTs [default: 7].\n"
 "-H HOST, --host HOST           IP-address [default: localhost].\n"
 "-p INT, --port INT             IP-port [default: 1337].\n"
 "-n INT, --out-of INT           Do 1-out-of-n oblivious transfer\n"
@@ -195,11 +195,15 @@ int main(int argc, char **argv)
   }
 
   // XXX.
-  // There's a bug somewhere that produces a segmentation fault when the number
+  // There's a bug in reaceiver.c that produces a segmentation fault when the number
   // of OTs is not divisible by 128. Right now I don't have enough time to investigate.
   // Remove the following line to reproduce.
   // (Note: tests have always been done on multiples of 128 in the past.)
   if (active_security) nOTs -= (nOTs + SSEC) % 128;
+  // XXX.
+  // There's a bug in receiver.c that produces a malloc() corruption when the number of OTs
+  // is less than 64. Right now I don't have enough time to investigate.
+  if (nOTs < 64) usage();
 
   load_code(code);
   if (!strcmp("sender", role))  {

@@ -197,7 +197,8 @@ void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols);
 /**
  * Compute in-place transpose of a matrix of (m x n) bits.
  */
-static inline void transpose(bitmatrix_t *dst, bitmatrix_t const * src, size_t m, size_t n)
+static inline
+void transpose(bitmatrix_t *dst, bitmatrix_t const * src, size_t m, size_t n)
 {
   const uint8_t *A = (uint8_t *) src->M;
   uint8_t *B = (uint8_t *) dst->M;

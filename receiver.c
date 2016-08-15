@@ -31,7 +31,7 @@ static void receiver_check(const int sockfd, const size_t m)
   for (size_t j = 0; j < m; ++j) {
     for (int i = 0; i < SSEC; ++i) {
       if (getbit(row(mu, i), j)) {
-        bitxor_small(w[i], row(choices, j), code->k);
+        bitxor(w[i], row(choices, j), code->k);
         bitxor(row(t, i), row(T, j), code->n);
       }
     }
@@ -61,9 +61,9 @@ void kk_receiver(int sockfd, size_t m) {
   bitmatrix_t T0 = new_bitmatrix(code->n, ms);
   bitmatrix_t T1 = new_bitmatrix(code->n, ms);
   for (size_t i = 0; i < code->n; i++) {
-    reading(p[0], row(T0, i), octs(KAPPA));
+    readbits(p[0], row(T0, i), KAPPA);
     prgbits(row(T0, i), ms);
-    reading(p[0], row(T1, i), octs(KAPPA));
+    readbits(p[0], row(T1, i), KAPPA);
     prgbits(row(T1, i), ms);
   }
 
