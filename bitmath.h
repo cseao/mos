@@ -73,8 +73,10 @@ void bitxor(void *_a, const void *_b, const size_t n)
  * Place the result in a.
  */
 static inline
-void bitand(void *_a, const void *_b, size_t n)
+void bitand_m128i(void *_a, const void *_b, size_t n)
 {
+  assert(n % 128 == 0);
+
   __m128i *a = (__m128i *) _a;
   __m128i *b = (__m128i *) _b;
   n >>= 7;
@@ -82,6 +84,40 @@ void bitand(void *_a, const void *_b, size_t n)
     *a = _mm_and_si128(*a, *b);
     ++a; ++b;
   }
+}
+
+/**
+ * Compute bitwise xor between to bit-vectors a, b of n bits,
+ * where n is a multiple of 8.
+ * Place the result in a.
+ */
+static inline
+void bitand_uint8(void *_a, const void *_b, size_t n)
+{
+  assert(n % 8 == 0);
+
+  uint8_t *a = (uint8_t *) _a;
+  uint8_t *b = (uint8_t *) _b;
+
+  n >>= 3;
+  while (n--) {
+    *a ^= *b;
+    a++; b++;
+  }
+}
+
+static inline
+void bitand(void *_a, const void *_b, const size_t n)
+{
+  assert(n % 8 == 0);
+
+  uint8_t *a = (uint8_t *) _a;
+  uint8_t *b = (uint8_t *) _b;
+  const size_t small = n % 128;
+  const size_t big = n - small;
+
+  bitand_m128i(a, b,  big);
+  bitand_uint8(a+big, b+big, small);
 }
 
 /**
