@@ -25,7 +25,7 @@ void test_transpose_identity()
   assert(getbit(m.M, 1) == 0);
   transpose(&m, &m, 8, 8);
   assert(getbit(m.M, 0) == 1);
-  assert(getbit(m.M, 1) == 1);
+  assert(getbit(m.M, 1) == 0);
 }
 
 void test_transpose()

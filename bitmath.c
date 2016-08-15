@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include <omp.h>
 
 #include "bitmath.h"
 
@@ -24,6 +25,7 @@ void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
   union { __m128i x; uint8_t b[16]; } tmp;
   assert(nrows % 8 == 0 && ncols % 8 == 0);
 
+#pragma omp parallel for private(rr, cc, i, tmp)
   // Do the main body in 16x8 blocks:
   for (rr = 0; rr <= nrows - 16; rr += 16) {
     for (cc = 0; cc < ncols; cc += 8) {
@@ -33,7 +35,9 @@ void __sse_trans(uint8_t const *inp, uint8_t *out, int nrows, int ncols)
         *(uint16_t*)&OUT(rr,cc+i)= _mm_movemask_epi8(tmp.x);
     }
   }
-  if (rr == nrows) return;
+
+  if (nrows % 16 == 0) return;
+  rr = nrows - nrows % 16;
 
   // The remainder is a block of 8x(16n+8) bits (n may be 0).
   //  Do a PAIR of 8x8 blocks in each step:

@@ -1,5 +1,5 @@
 CC?=cc
-CFLAGS+=-mavx -Wall -Wextra -Werror -pedantic -funroll-loops -std=c99 -g
+CFLAGS+=-mavx -Wall -Wextra -Werror -pedantic -funroll-loops -fopenmp -std=c99 -g
 
 HEADERS=bitmath.h codes.h otext.h oracle.h
 OBJS= ot.o bitmath.o oracle.o std.o sender.o receiver.o codes.o
