@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -11,13 +12,15 @@
 static uint8_t *delta;
 static bitmatrix_t QT;
 
-static void sender_check(const int sockfd, const size_t m)
+static bool sender_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
   uint8_t q[SSEC][octs(code->n)];
   uint8_t t[SSEC][octs(code->n)];
   uint8_t c[SSEC][octs(code->n)];
   uint8_t w[SSEC][octs(code->k)];
+  bool pass = true;
+
   for (int i = 0; i < SSEC; ++i) {
     randombits(row(mu, i), KAPPA);
     writebits(sockfd, row(mu, i), KAPPA);
@@ -41,14 +44,15 @@ static void sender_check(const int sockfd, const size_t m)
     bitxor(q[i], t[i], code->n);
     bitand(c[i], delta, code->n);
 
-    if (!biteq(c[i], q[i], code->n)) {
-      PROTOCOL_ABORT();
-    }
+    pass &= biteq(c[i], q[i], code->n);
   }
+
   free_bitmatrix(mu);
+  return pass;
 }
 
-void kk_sender(int sockfd, size_t m)
+
+bitmatrix_t kk_sender(int sockfd, size_t m)
 {
   int p[2];
   if (pipe(p) == -1) {
@@ -84,12 +88,14 @@ void kk_sender(int sockfd, size_t m)
   QT = new_bitmatrix(ms, code->n);
   transpose(&QT, &Q, code->n, ms);
 
-  if (active_security) {
-    sender_check(sockfd, m);
+  if (active_security && !sender_check(sockfd, m)) {
+    PROTOCOL_ABORT("Check Failed!");
   }
 
   uint8_t q[octs(code->n)];
   uint8_t w[octs(code->k)];
+
+  bitmatrix_t V = new_bitmatrix(m * codewordsn, KAPPA);
   for (size_t j = 0; j < m; ++j) {
     bitset_zero(w, code->k);
     for (size_t i = 0; i < codewordsn; i++) {
@@ -97,19 +103,14 @@ void kk_sender(int sockfd, size_t m)
       bitand(q, delta, code->n);
       bitxor(q, row(QT, j), code->n);
 
-      hash(q, q, j, octs(code->n));
-#ifndef NDEBUG
-      Bprint(q, octs(KAPPA));
-      printf("\t");
-#endif
+      hash(row(V, j*codewordsn + i), q, j, octs(code->n));
       next_word(w);
     }
-#ifndef NDEBUG
-    printf("\n");
-#endif
   }
   free_bitmatrix(Q);
   free_bitmatrix(QT);
   free(u);
   free(delta);
+
+  return V;
 }
