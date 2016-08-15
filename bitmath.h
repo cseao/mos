@@ -168,8 +168,7 @@ uint8_t getbit(const void *_v, size_t pos)
  * and allow me to think always in terms of bits.
  */
 #define bitcpy(dest, src, bits) memcpy(dest, src, octs(bits))
-// XXX. TODO: make this a call to malloc() instead, we shouldn't need initialization.
-#define bitalloc(bits)          calloc(octs(bits), sizeof(uint8_t))
+#define bitalloc(bits)          malloc(octs(bits) * sizeof(uint8_t))
 
 #define bitmask(v, bits)                                        \
   ((uint8_t *) v)[(bits-1) >> 3] &= (1 << ((bits-1) % 8)) - 1
