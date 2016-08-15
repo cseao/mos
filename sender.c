@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -11,13 +12,15 @@
 static uint8_t *delta;
 static bitmatrix_t QT;
 
-static void sender_check(const int sockfd, const size_t m)
+static bool sender_check(const int sockfd, const size_t m)
 {
   bitmatrix_t mu = new_bitmatrix(SSEC, m);
   uint8_t q[SSEC][octs(code->n)];
   uint8_t t[SSEC][octs(code->n)];
   uint8_t c[SSEC][octs(code->n)];
   uint8_t w[SSEC][octs(code->k)];
+  bool pass = true;
+
   for (int i = 0; i < SSEC; ++i) {
     randombits(row(mu, i), KAPPA);
     writebits(sockfd, row(mu, i), KAPPA);
@@ -41,11 +44,11 @@ static void sender_check(const int sockfd, const size_t m)
     bitxor(q[i], t[i], code->n);
     bitand(c[i], delta, code->n);
 
-    if (!biteq(c[i], q[i], code->n)) {
-      PROTOCOL_ABORT();
-    }
+    pass &= biteq(c[i], q[i], code->n);
   }
+
   free_bitmatrix(mu);
+  return pass;
 }
 
 void kk_sender(int sockfd, size_t m)
@@ -84,8 +87,8 @@ void kk_sender(int sockfd, size_t m)
   QT = new_bitmatrix(ms, code->n);
   transpose(&QT, &Q, code->n, ms);
 
-  if (active_security) {
-    sender_check(sockfd, m);
+  if (active_security && !sender_check(sockfd, m)) {
+    PROTOCOL_ABORT("Check Failed!");
   }
 
   uint8_t q[octs(code->n)];

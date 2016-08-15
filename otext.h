@@ -9,8 +9,8 @@
 #define writebits(from, to, howmany) writing(from, to, octs(howmany))
 #define readbits(from, to, howmany)  reading(from, to, octs(howmany))
 
-#define PROTOCOL_ABORT()                        \
-  fprintf(stderr, "Check Failed!\n");           \
+#define PROTOCOL_ABORT(MSG)            \
+  fprintf(stderr, MSG "\n");           \
   exit(EXIT_FAILURE)
 
 extern bool active_security;
