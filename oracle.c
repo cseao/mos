@@ -37,9 +37,3 @@ void hash(uint8_t *out, uint8_t *in, const size_t j, const size_t inlen)
 
   blake2(out, inj, NULL, octs(KAPPA), inlen + jsize, 0);
 }
-
-
-void base_hash(void *in, const size_t inlen)
-{
-  blake2(in, in, NULL, octs(KAPPA), inlen, 0);
-}

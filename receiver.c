@@ -97,7 +97,7 @@ bitmatrix_t kk_receiver(int sockfd, size_t m) {
   bitmatrix_t V = new_bitmatrix(m, KAPPA);
 #pragma omp parallel for
   for (size_t j = 0; j < m; ++j) {
-    hash(row(V, j), row(T, j), j, octs(code->n));
+    hashbits(row(V, j), row(T, j), j, code->n);
   }
 
   free(u);

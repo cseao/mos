@@ -104,7 +104,7 @@ bitmatrix_t kk_sender(int sockfd, size_t m)
       bitand(q, delta, code->n);
       bitxor(q, row(QT, j), code->n);
 
-      hash(row(V, j*codewordsn + i), q, j, octs(code->n));
+      hashbits(row(V, j*codewordsn + i), q, j, code->n);
       next_word(w);
     }
   }
