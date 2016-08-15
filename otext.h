@@ -21,4 +21,4 @@ void std_sender(int sockfd, int nOTs);
 void std_receiver(int sockfd, int nOTs);
 
 bitmatrix_t kk_sender(int sockfd, size_t nOTs);
-void kk_receiver(int sockfd, size_t nOTs);
+bitmatrix_t kk_receiver(int sockfd, size_t nOTs);

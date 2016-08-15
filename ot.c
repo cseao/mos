@@ -56,8 +56,8 @@ static int sender_main(int port) {
       printf("\n");
     }
 #endif
-    free_bitmatrix(V);
 
+    free_bitmatrix(V);
     printf("%ld OTs sender: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     uint8_t end = 0x42;
@@ -71,6 +71,7 @@ static int sender_main(int port) {
 static int receiver_main(const char *host, const int port) {
     int sockfd;
     int sndbuf = BUFSIZE;
+    bitmatrix_t V;
 
     client_connect(&sockfd, host, port);
 
@@ -80,8 +81,17 @@ static int receiver_main(const char *host, const int port) {
     }
 
     START_TIMEIT();
-    kk_receiver(sockfd, nOTs);
+    V = kk_receiver(sockfd, nOTs);
     END_TIMEIT();
+
+#ifndef NDEBUG
+    for (size_t j = 0; j < nOTs; ++j) {
+      Bprint(row(V, j), octs(KAPPA));
+      printf("\n");
+    }
+#endif
+
+    free_bitmatrix(V);
     printf("%ld OTs receiver: " TIMEIT_FORMAT " seconds\n", nOTs, GET_TIMEIT());
 
     uint8_t end;

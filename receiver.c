@@ -46,7 +46,7 @@ static void receiver_check(const int sockfd, const size_t m)
   free_bitmatrix(t);
 }
 
-void kk_receiver(int sockfd, size_t m) {
+bitmatrix_t kk_receiver(int sockfd, size_t m) {
   int p[2];
   if (pipe(p) == -1) {
     perror("Cannot create pipe");
@@ -92,21 +92,17 @@ void kk_receiver(int sockfd, size_t m) {
   free_bitmatrix(T0);
   free_bitmatrix(T1);
 
-  if (active_security) {
-    receiver_check(sockfd, m);
-  }
+  if (active_security) receiver_check(sockfd, m);
 
-  uint8_t pad[octs(KAPPA)];
+  bitmatrix_t V = new_bitmatrix(m, KAPPA);
   for (size_t j = 0; j < m; ++j) {
-    hash(pad, row(T, j), j, octs(code->n));
-#ifndef NDEBUG
-    Bprint(pad, octs(KAPPA));
-    printf("\n");
-#endif
+    hash(row(V, j), row(T, j), j, octs(code->n));
   }
 
   free(u);
   free_bitmatrix(choices);
   free_bitmatrix(CT);
   free_bitmatrix(T);
+
+  return V;
 }
