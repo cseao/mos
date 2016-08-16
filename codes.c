@@ -47,7 +47,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 
 #include "bitmath.h"
 #include "codes.h"
@@ -62,19 +61,6 @@ code_t codes[] = {
 
   {.name = NULL, .n = 0, .k = 0, .file = NULL},
 };
-
-
-void encode(const code_t *code, void *c, const void *word)
-{
-  bitset_zero(c, code->n);
-
-  for (size_t i = 0; i < code->k; ++i) {
-    if (getbit(word, i)) {
-      bitxor(c, row(code->_G, i), code->n);
-    }
-  }
-}
-
 
 // XXX. return error.
 static void load_G(code_t *code)

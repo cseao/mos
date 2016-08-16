@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <string.h>
 
 #include "bitmath.h"
 
@@ -16,7 +17,18 @@ typedef struct code {
 } code_t;
 
 
-void encode(const code_t* code, void *c, const void *word);
+static inline
+void encode(const code_t *code, void *c, const void *word)
+{
+  bitset_zero(c, code->n);
+
+  for (size_t i = 0; i < code->k; ++i) {
+    if (getbit(word, i)) {
+      bitxor(c, row(code->_G, i), code->n);
+    }
+  }
+}
+
 code_t *load_codestr(const char *alias);
 void unload_code(code_t * code);
 
