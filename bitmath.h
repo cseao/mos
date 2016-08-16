@@ -37,14 +37,17 @@ void bitxor_m128i(void *_a, const void *_b, size_t n)
  * Place the result in a.
  */
 static inline
-void bitxor_small(void *_a, const void *_b, size_t n)
+void bitxor_small(void *_a, const void *_b, const size_t _n)
 {
-  assert(n % 8 == 0);
-
+  size_t n = _n;
   uint8_t *a = (uint8_t *) _a;
   uint8_t *b = (uint8_t *) _b;
 
   n >>= 3;
+
+  /* round to the closest multiple of 8-bits */
+  if (_n & 7) n++;
+
   while (n--) {
     *a ^= *b;
     a++; b++;
@@ -55,8 +58,6 @@ void bitxor_small(void *_a, const void *_b, size_t n)
 static inline
 void bitxor(void *_a, const void *_b, const size_t n)
 {
-  assert(n % 8 == 0);
-
   uint8_t *a = (uint8_t *) _a;
   uint8_t *b = (uint8_t *) _b;
   const size_t small = n % 128;
@@ -92,14 +93,18 @@ void bitand_m128i(void *_a, const void *_b, size_t n)
  * Place the result in a.
  */
 static inline
-void bitand_uint8(void *_a, const void *_b, size_t n)
+void bitand_uint8(void *_a, const void *_b, const size_t _n)
 {
-  assert(n % 8 == 0);
-
+  size_t n = _n;
   uint8_t *a = (uint8_t *) _a;
   uint8_t *b = (uint8_t *) _b;
 
   n >>= 3;
+
+  /* round to the closest multiple of 8-bits */
+  if (_n & 7) n++;
+
+
   while (n--) {
     *a ^= *b;
     a++; b++;
