@@ -1,49 +1,63 @@
-// I produce the systematic generator matrix G using sage.
-// Then, I do:
-// def b(x): return numpy.packbits(x.numpy('b')).tobytes()
-// to get the blobs below.
-// For example, with walsh-hadamard codes I did:
-// sage: G = codes.WalshCode(8).generator_matrix_systematic()
-// sage: print G.str()
-// [0 1 0 1 0 1 0 1 0 …
-// sage: print numpy.packbits(G.numpy('b'))
-// [ 85  85 85 … 255 255]
-// sage: numpy.packbits(G.numpy('b')).tobytes()
-// 'UUU…\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-
-// Obtained with:
-// sage: G = codes.WalshCode(8).generator_matrix_systematic()
-
-
-// Shortened Walsh-Hadamard code. Obtained with:
-// sage: V = VectorSpace(GF(2), 8)
-// sage: Gt = matrix([[1] + b.list() for b in V])
-// sage: C = LinearCode(Gt.T)
-// sage: C
-// Linear code of length 256, dimension 9 over Finite Field of size 2
-// sage: C.minimum_distance()
-// 128
-
-// sage: C = codes.ExtendedBinaryGolayCode()
-// sage: C
-// Linear code of length 24, dimension 12 over Finite Field of size 2
-// sage: G = C.generator_matrix_systematic()
-// sage: Ge = matrix([c.list() * 16 for c in G])
-// sage: Ge
-// 12 x 384 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
-
-// sage: C = codes.BCHCode(511, 2*85, GF(2), b=1)
-// sage: def b(x): return numpy.packbits(x.numpy('b')).tobytes()
-// sage: import numpy
-// sage: G = C.genera
-// // C.generator_matrix             C.generator_matrix_systematic
-// sage: G = C.generator_matrix_systematic()
-// sage: Ge = matrix([g.list() + [0] for g in G])
-// sage: f = open('bch-511.code', 'w')
-// sage: f.write(b(Ge))
-// sage: f.close()
-// sage: Ge
-// 76 x 512 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
+/**
+ * Enoding utilities.
+ *
+ * The following example codes are dynamically loaded from a file containing the
+ * generator matrix (possibly in systematic form) stored as a bit vector of k*n bits.
+ *
+ * Note: the length MUST be a multiple of 8. We cannot possibly transmit less than
+ * 8-bits at a time.
+ *
+ * I generated my codes using sage.
+ * The following function:
+ *
+ * def b(x): return numpy.packbits(x.numpy('b')).tobytes()
+ *
+ * packs a binary matrix/vector into bytes, just as we do require.
+ * So for example once you have a linear code C, you can retrieve the generator
+ * matrix with:
+ *
+ * sage: G = codes.WalshCode(8).generator_matrix_systematic()
+ *
+ * and from here it's rock'n'roll:
+ *
+ * sage: print G.str()
+ * [0 1 0 1 0 1 0 1 0 …
+ * sage: print numpy.packbits(G.numpy('b'))
+ * [ 85  85 85 … 255 255]
+ * sage: numpy.packbits(G.numpy('b')).tobytes()
+'* UUU…\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+ *
+ *
+ * ***  Repetition code
+ * Trivial, use string multiplication.
+ *
+ * ***  Walsh-Hadamard code
+ * It is avaliable in sage:
+ *
+ * sage: G = codes.WalshCode(8).generator_matrix_systematic()
+ *
+ * *** Shortened Walsh-Hadamard Code
+ * Obtained from:
+ * sage: V = VectorSpace(GF(2), 8)
+ * sage: Gt = matrix([[1] + b.list() for b in V])
+ * sage: C = LinearCode(Gt.T)
+ *
+ * *** Repeated Golay Codes
+ * Obtained with:
+ *
+ * sage: C = codes.ExtendedBinaryGolayCode()
+ * sage: G = C.generator_matrix_systematic()
+ * sage: Ge = matrix([c.list() * 16 for c in G])
+ *
+ *
+ * *** BCH Code Example
+ * Obtained with:
+ *
+ * sage: C = codes.BCHCode(511, 2*85, GF(2), b=1)
+ * sage: G = C.generator_matrix_systematic()
+ * sage: Ge = matrix([g.list() + [0] for g in G])
+ *
+ */
 
 #include <stdio.h>
 #include <stdint.h>
