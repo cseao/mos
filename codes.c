@@ -91,8 +91,9 @@ static void load_G(code_t *code)
   code->_G = new_bitmatrix(code->k, code->n);
   Gread = fread(code->_G.M, sizeof(uint8_t), Gsize, Gfile);
   if (Gread < Gsize) {
+    free_bitmatrix(code->_G);
+
     fprintf(stderr, "Error reading file!\n");
-    // XXX. free memory, return error.
     exit(EXIT_FAILURE);
   }
   fclose(Gfile);
