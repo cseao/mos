@@ -182,9 +182,9 @@ movq   %rax,16(%rcx)
 movq   %rdx,24(%rcx)
 
 # qhasm: v = buf
-# asm 1: vmovapd <buf=stack256#1,>v=reg256#1
-# asm 2: vmovapd <buf=0(%rsp),>v=%ymm0
-vmovapd 0(%rsp),%ymm0
+# asm 1: vmovupd <buf=stack256#1,>v=reg256#1
+# asm 2: vmovupd <buf=0(%rsp),>v=%ymm0
+vmovupd 0(%rsp),%ymm0
 
 # qhasm: (int64) r0 >>= 7
 # asm 1: sar  $7,<r0=int64#5
@@ -247,19 +247,19 @@ movq   %rax,16(%rcx)
 movq   %rdx,24(%rcx)
 
 # qhasm: neg_mask = buf
-# asm 1: vmovapd <buf=stack256#1,>neg_mask=reg256#2
-# asm 2: vmovapd <buf=0(%rsp),>neg_mask=%ymm1
-vmovapd 0(%rsp),%ymm1
+# asm 1: vmovupd <buf=stack256#1,>neg_mask=reg256#2
+# asm 2: vmovupd <buf=0(%rsp),>neg_mask=%ymm1
+vmovupd 0(%rsp),%ymm1
 
 # qhasm: allone aligned= mem256[_allone]
-# asm 1: vmovapd _allone,>allone=reg256#3
-# asm 2: vmovapd _allone,>allone=%ymm2
-vmovapd _allone,%ymm2
+# asm 1: vmovupd _allone,>allone=reg256#3
+# asm 2: vmovupd _allone,>allone=%ymm2
+vmovupd _allone,%ymm2
 
 # qhasm: i aligned= mem256[_idx0]
-# asm 1: vmovapd _idx0,>i=reg256#4
-# asm 2: vmovapd _idx0,>i=%ymm3
-vmovapd _idx0,%ymm3
+# asm 1: vmovupd _idx0,>i=reg256#4
+# asm 2: vmovupd _idx0,>i=%ymm3
+vmovupd _idx0,%ymm3
 
 # qhasm: mask0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#4,>mask0=reg256#4
@@ -267,9 +267,9 @@ vmovapd _idx0,%ymm3
 vcmpeqpd %ymm0,%ymm3,%ymm3
 
 # qhasm: i aligned= mem256[_idx_1]
-# asm 1: vmovapd _idx_1,>i=reg256#5
-# asm 2: vmovapd _idx_1,>i=%ymm4
-vmovapd _idx_1,%ymm4
+# asm 1: vmovupd _idx_1,>i=reg256#5
+# asm 2: vmovupd _idx_1,>i=%ymm4
+vmovupd _idx_1,%ymm4
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#5,>res0=reg256#5
@@ -277,9 +277,9 @@ vmovapd _idx_1,%ymm4
 vcmpeqpd %ymm0,%ymm4,%ymm4
 
 # qhasm: i aligned= mem256[_idx1]
-# asm 1: vmovapd _idx1,>i=reg256#6
-# asm 2: vmovapd _idx1,>i=%ymm5
-vmovapd _idx1,%ymm5
+# asm 1: vmovupd _idx1,>i=reg256#6
+# asm 2: vmovupd _idx1,>i=%ymm5
+vmovupd _idx1,%ymm5
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#6,>res1=reg256#6
@@ -292,9 +292,9 @@ vcmpeqpd %ymm0,%ymm5,%ymm5
 vorpd  %ymm4,%ymm5,%ymm4
 
 # qhasm: i aligned= mem256[_idx_2]
-# asm 1: vmovapd _idx_2,>i=reg256#6
-# asm 2: vmovapd _idx_2,>i=%ymm5
-vmovapd _idx_2,%ymm5
+# asm 1: vmovupd _idx_2,>i=reg256#6
+# asm 2: vmovupd _idx_2,>i=%ymm5
+vmovupd _idx_2,%ymm5
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#6,>res0=reg256#6
@@ -302,9 +302,9 @@ vmovapd _idx_2,%ymm5
 vcmpeqpd %ymm0,%ymm5,%ymm5
 
 # qhasm: i aligned= mem256[_idx2]
-# asm 1: vmovapd _idx2,>i=reg256#7
-# asm 2: vmovapd _idx2,>i=%ymm6
-vmovapd _idx2,%ymm6
+# asm 1: vmovupd _idx2,>i=reg256#7
+# asm 2: vmovupd _idx2,>i=%ymm6
+vmovupd _idx2,%ymm6
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#7,>res1=reg256#7
@@ -317,9 +317,9 @@ vcmpeqpd %ymm0,%ymm6,%ymm6
 vorpd  %ymm5,%ymm6,%ymm5
 
 # qhasm: i aligned= mem256[_idx_3]
-# asm 1: vmovapd _idx_3,>i=reg256#7
-# asm 2: vmovapd _idx_3,>i=%ymm6
-vmovapd _idx_3,%ymm6
+# asm 1: vmovupd _idx_3,>i=reg256#7
+# asm 2: vmovupd _idx_3,>i=%ymm6
+vmovupd _idx_3,%ymm6
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#7,>res0=reg256#7
@@ -327,9 +327,9 @@ vmovapd _idx_3,%ymm6
 vcmpeqpd %ymm0,%ymm6,%ymm6
 
 # qhasm: i aligned= mem256[_idx3]
-# asm 1: vmovapd _idx3,>i=reg256#8
-# asm 2: vmovapd _idx3,>i=%ymm7
-vmovapd _idx3,%ymm7
+# asm 1: vmovupd _idx3,>i=reg256#8
+# asm 2: vmovupd _idx3,>i=%ymm7
+vmovupd _idx3,%ymm7
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#8,>res1=reg256#8
@@ -342,9 +342,9 @@ vcmpeqpd %ymm0,%ymm7,%ymm7
 vorpd  %ymm6,%ymm7,%ymm6
 
 # qhasm: i aligned= mem256[_idx_4]
-# asm 1: vmovapd _idx_4,>i=reg256#8
-# asm 2: vmovapd _idx_4,>i=%ymm7
-vmovapd _idx_4,%ymm7
+# asm 1: vmovupd _idx_4,>i=reg256#8
+# asm 2: vmovupd _idx_4,>i=%ymm7
+vmovupd _idx_4,%ymm7
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#8,>res0=reg256#8
@@ -352,9 +352,9 @@ vmovapd _idx_4,%ymm7
 vcmpeqpd %ymm0,%ymm7,%ymm7
 
 # qhasm: i aligned= mem256[_idx4]
-# asm 1: vmovapd _idx4,>i=reg256#9
-# asm 2: vmovapd _idx4,>i=%ymm8
-vmovapd _idx4,%ymm8
+# asm 1: vmovupd _idx4,>i=reg256#9
+# asm 2: vmovupd _idx4,>i=%ymm8
+vmovupd _idx4,%ymm8
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#9,>res1=reg256#9
@@ -367,9 +367,9 @@ vcmpeqpd %ymm0,%ymm8,%ymm8
 vorpd  %ymm7,%ymm8,%ymm7
 
 # qhasm: i aligned= mem256[_idx_5]
-# asm 1: vmovapd _idx_5,>i=reg256#9
-# asm 2: vmovapd _idx_5,>i=%ymm8
-vmovapd _idx_5,%ymm8
+# asm 1: vmovupd _idx_5,>i=reg256#9
+# asm 2: vmovupd _idx_5,>i=%ymm8
+vmovupd _idx_5,%ymm8
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#9,>res0=reg256#9
@@ -377,9 +377,9 @@ vmovapd _idx_5,%ymm8
 vcmpeqpd %ymm0,%ymm8,%ymm8
 
 # qhasm: i aligned= mem256[_idx5]
-# asm 1: vmovapd _idx5,>i=reg256#10
-# asm 2: vmovapd _idx5,>i=%ymm9
-vmovapd _idx5,%ymm9
+# asm 1: vmovupd _idx5,>i=reg256#10
+# asm 2: vmovupd _idx5,>i=%ymm9
+vmovupd _idx5,%ymm9
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#10,>res1=reg256#10
@@ -392,9 +392,9 @@ vcmpeqpd %ymm0,%ymm9,%ymm9
 vorpd  %ymm8,%ymm9,%ymm8
 
 # qhasm: i aligned= mem256[_idx_6]
-# asm 1: vmovapd _idx_6,>i=reg256#10
-# asm 2: vmovapd _idx_6,>i=%ymm9
-vmovapd _idx_6,%ymm9
+# asm 1: vmovupd _idx_6,>i=reg256#10
+# asm 2: vmovupd _idx_6,>i=%ymm9
+vmovupd _idx_6,%ymm9
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#10,>res0=reg256#10
@@ -402,9 +402,9 @@ vmovapd _idx_6,%ymm9
 vcmpeqpd %ymm0,%ymm9,%ymm9
 
 # qhasm: i aligned= mem256[_idx6]
-# asm 1: vmovapd _idx6,>i=reg256#11
-# asm 2: vmovapd _idx6,>i=%ymm10
-vmovapd _idx6,%ymm10
+# asm 1: vmovupd _idx6,>i=reg256#11
+# asm 2: vmovupd _idx6,>i=%ymm10
+vmovupd _idx6,%ymm10
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#11,>res1=reg256#11
@@ -417,9 +417,9 @@ vcmpeqpd %ymm0,%ymm10,%ymm10
 vorpd  %ymm9,%ymm10,%ymm9
 
 # qhasm: i aligned= mem256[_idx_7]
-# asm 1: vmovapd _idx_7,>i=reg256#11
-# asm 2: vmovapd _idx_7,>i=%ymm10
-vmovapd _idx_7,%ymm10
+# asm 1: vmovupd _idx_7,>i=reg256#11
+# asm 2: vmovupd _idx_7,>i=%ymm10
+vmovupd _idx_7,%ymm10
 
 # qhasm: res0 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#11,>res0=reg256#11
@@ -427,9 +427,9 @@ vmovapd _idx_7,%ymm10
 vcmpeqpd %ymm0,%ymm10,%ymm10
 
 # qhasm: i aligned= mem256[_idx7]
-# asm 1: vmovapd _idx7,>i=reg256#12
-# asm 2: vmovapd _idx7,>i=%ymm11
-vmovapd _idx7,%ymm11
+# asm 1: vmovupd _idx7,>i=reg256#12
+# asm 2: vmovupd _idx7,>i=%ymm11
+vmovupd _idx7,%ymm11
 
 # qhasm: res1 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#12,>res1=reg256#12
@@ -442,9 +442,9 @@ vcmpeqpd %ymm0,%ymm11,%ymm11
 vorpd  %ymm10,%ymm11,%ymm10
 
 # qhasm: i aligned= mem256[_idx_8]
-# asm 1: vmovapd _idx_8,>i=reg256#12
-# asm 2: vmovapd _idx_8,>i=%ymm11
-vmovapd _idx_8,%ymm11
+# asm 1: vmovupd _idx_8,>i=reg256#12
+# asm 2: vmovupd _idx_8,>i=%ymm11
+vmovupd _idx_8,%ymm11
 
 # qhasm: mask8 = (v == i)
 # asm 1: vcmpeqpd <v=reg256#1,<i=reg256#12,>mask8=reg256#12
@@ -452,9 +452,9 @@ vmovapd _idx_8,%ymm11
 vcmpeqpd %ymm0,%ymm11,%ymm11
 
 # qhasm: F0 aligned= mem256[_F0]
-# asm 1: vmovapd _F0,>F0=reg256#13
-# asm 2: vmovapd _F0,>F0=%ymm12
-vmovapd _F0,%ymm12
+# asm 1: vmovupd _F0,>F0=reg256#13
+# asm 2: vmovupd _F0,>F0=%ymm12
+vmovupd _F0,%ymm12
 
 # qhasm: flip = v^F0
 # asm 1: vxorpd <v=reg256#1,<F0=reg256#13,>flip=reg256#1
@@ -467,9 +467,9 @@ vxorpd %ymm0,%ymm12,%ymm0
 vsubpd %ymm12,%ymm0,%ymm0
 
 # qhasm: mzero aligned= mem256[_mzero]
-# asm 1: vmovapd _mzero,>mzero=reg256#13
-# asm 2: vmovapd _mzero,>mzero=%ymm12
-vmovapd _mzero,%ymm12
+# asm 1: vmovupd _mzero,>mzero=reg256#13
+# asm 2: vmovupd _mzero,>mzero=%ymm12
+vmovupd _mzero,%ymm12
 
 # qhasm: flip &= mzero
 # asm 1: vandpd <mzero=reg256#13,<flip=reg256#1,<flip=reg256#1
@@ -487,9 +487,9 @@ vmovupd _one,%ymm12
 vandpd %ymm3,%ymm12,%ymm12
 
 # qhasm: t1 = t0
-# asm 1: vmovapd <t0=reg256#13,>t1=reg256#4
-# asm 2: vmovapd <t0=%ymm12,>t1=%ymm3
-vmovapd %ymm12,%ymm3
+# asm 1: vmovupd <t0=reg256#13,>t1=reg256#4
+# asm 2: vmovupd <t0=%ymm12,>t1=%ymm3
+vmovupd %ymm12,%ymm3
 
 # qhasm: clear t2
 # asm 1: vxorpd >t2=reg256#14,>t2=reg256#14,>t2=reg256#14
@@ -862,9 +862,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 768] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,768(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,768(<input_0=%rdi)
-vmovapd   %ymm13,768(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,768(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,768(<input_0=%rdi)
+vmovupd   %ymm13,768(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#13,<t1=reg256#4,>diff=reg256#14
@@ -887,14 +887,14 @@ vxorpd %ymm13,%ymm12,%ymm12
 vxorpd %ymm13,%ymm3,%ymm3
 
 # qhasm: mem256[input_0 + 0] aligned= t0
-# asm 1: vmovapd   <t0=reg256#13,0(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm12,0(<input_0=%rdi)
-vmovapd   %ymm12,0(%rdi)
+# asm 1: vmovupd   <t0=reg256#13,0(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm12,0(<input_0=%rdi)
+vmovupd   %ymm12,0(%rdi)
 
 # qhasm: mem256[input_0 + 384] aligned= t1
-# asm 1: vmovapd   <t1=reg256#4,384(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm3,384(<input_0=%rdi)
-vmovapd   %ymm3,384(%rdi)
+# asm 1: vmovupd   <t1=reg256#4,384(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm3,384(<input_0=%rdi)
+vmovupd   %ymm3,384(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -1277,9 +1277,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 800] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,800(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,800(<input_0=%rdi)
-vmovapd   %ymm13,800(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,800(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,800(<input_0=%rdi)
+vmovupd   %ymm13,800(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -1302,14 +1302,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 32] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,32(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,32(<input_0=%rdi)
-vmovapd   %ymm3,32(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,32(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,32(<input_0=%rdi)
+vmovupd   %ymm3,32(%rdi)
 
 # qhasm: mem256[input_0 + 416] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,416(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,416(<input_0=%rdi)
-vmovapd   %ymm12,416(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,416(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,416(<input_0=%rdi)
+vmovupd   %ymm12,416(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -1692,9 +1692,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 832] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,832(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,832(<input_0=%rdi)
-vmovapd   %ymm13,832(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,832(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,832(<input_0=%rdi)
+vmovupd   %ymm13,832(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -1717,14 +1717,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 64] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,64(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,64(<input_0=%rdi)
-vmovapd   %ymm3,64(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,64(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,64(<input_0=%rdi)
+vmovupd   %ymm3,64(%rdi)
 
 # qhasm: mem256[input_0 + 448] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,448(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,448(<input_0=%rdi)
-vmovapd   %ymm12,448(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,448(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,448(<input_0=%rdi)
+vmovupd   %ymm12,448(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -2107,9 +2107,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 864] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,864(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,864(<input_0=%rdi)
-vmovapd   %ymm13,864(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,864(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,864(<input_0=%rdi)
+vmovupd   %ymm13,864(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -2132,14 +2132,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 96] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,96(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,96(<input_0=%rdi)
-vmovapd   %ymm3,96(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,96(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,96(<input_0=%rdi)
+vmovupd   %ymm3,96(%rdi)
 
 # qhasm: mem256[input_0 + 480] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,480(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,480(<input_0=%rdi)
-vmovapd   %ymm12,480(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,480(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,480(<input_0=%rdi)
+vmovupd   %ymm12,480(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -2522,9 +2522,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 896] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,896(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,896(<input_0=%rdi)
-vmovapd   %ymm13,896(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,896(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,896(<input_0=%rdi)
+vmovupd   %ymm13,896(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -2547,14 +2547,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 128] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,128(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,128(<input_0=%rdi)
-vmovapd   %ymm3,128(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,128(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,128(<input_0=%rdi)
+vmovupd   %ymm3,128(%rdi)
 
 # qhasm: mem256[input_0 + 512] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,512(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,512(<input_0=%rdi)
-vmovapd   %ymm12,512(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,512(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,512(<input_0=%rdi)
+vmovupd   %ymm12,512(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -2937,9 +2937,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 928] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,928(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,928(<input_0=%rdi)
-vmovapd   %ymm13,928(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,928(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,928(<input_0=%rdi)
+vmovupd   %ymm13,928(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -2962,14 +2962,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 160] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,160(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,160(<input_0=%rdi)
-vmovapd   %ymm3,160(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,160(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,160(<input_0=%rdi)
+vmovupd   %ymm3,160(%rdi)
 
 # qhasm: mem256[input_0 + 544] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,544(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,544(<input_0=%rdi)
-vmovapd   %ymm12,544(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,544(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,544(<input_0=%rdi)
+vmovupd   %ymm12,544(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -3352,9 +3352,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 960] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,960(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,960(<input_0=%rdi)
-vmovapd   %ymm13,960(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,960(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,960(<input_0=%rdi)
+vmovupd   %ymm13,960(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -3377,14 +3377,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 192] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,192(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,192(<input_0=%rdi)
-vmovapd   %ymm3,192(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,192(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,192(<input_0=%rdi)
+vmovupd   %ymm3,192(%rdi)
 
 # qhasm: mem256[input_0 + 576] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,576(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,576(<input_0=%rdi)
-vmovapd   %ymm12,576(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,576(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,576(<input_0=%rdi)
+vmovupd   %ymm12,576(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -3767,9 +3767,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 992] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,992(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,992(<input_0=%rdi)
-vmovapd   %ymm13,992(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,992(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,992(<input_0=%rdi)
+vmovupd   %ymm13,992(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -3792,14 +3792,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 224] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,224(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,224(<input_0=%rdi)
-vmovapd   %ymm3,224(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,224(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,224(<input_0=%rdi)
+vmovupd   %ymm3,224(%rdi)
 
 # qhasm: mem256[input_0 + 608] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,608(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,608(<input_0=%rdi)
-vmovapd   %ymm12,608(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,608(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,608(<input_0=%rdi)
+vmovupd   %ymm12,608(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -4182,9 +4182,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 1024] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,1024(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,1024(<input_0=%rdi)
-vmovapd   %ymm13,1024(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,1024(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,1024(<input_0=%rdi)
+vmovupd   %ymm13,1024(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -4207,14 +4207,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 256] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,256(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,256(<input_0=%rdi)
-vmovapd   %ymm3,256(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,256(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,256(<input_0=%rdi)
+vmovupd   %ymm3,256(%rdi)
 
 # qhasm: mem256[input_0 + 640] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,640(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,640(<input_0=%rdi)
-vmovapd   %ymm12,640(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,640(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,640(<input_0=%rdi)
+vmovupd   %ymm12,640(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -4597,9 +4597,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 1056] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,1056(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,1056(<input_0=%rdi)
-vmovapd   %ymm13,1056(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,1056(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,1056(<input_0=%rdi)
+vmovupd   %ymm13,1056(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -4622,14 +4622,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 288] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,288(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,288(<input_0=%rdi)
-vmovapd   %ymm3,288(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,288(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,288(<input_0=%rdi)
+vmovupd   %ymm3,288(%rdi)
 
 # qhasm: mem256[input_0 + 672] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,672(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,672(<input_0=%rdi)
-vmovapd   %ymm12,672(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,672(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,672(<input_0=%rdi)
+vmovupd   %ymm12,672(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -5012,9 +5012,9 @@ vorpd  %ymm14,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 1088] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,1088(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,1088(<input_0=%rdi)
-vmovapd   %ymm13,1088(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,1088(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,1088(<input_0=%rdi)
+vmovupd   %ymm13,1088(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#14
@@ -5037,14 +5037,14 @@ vxorpd %ymm13,%ymm3,%ymm3
 vxorpd %ymm13,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 320] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,320(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,320(<input_0=%rdi)
-vmovapd   %ymm3,320(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,320(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,320(<input_0=%rdi)
+vmovupd   %ymm3,320(%rdi)
 
 # qhasm: mem256[input_0 + 704] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,704(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,704(<input_0=%rdi)
-vmovapd   %ymm12,704(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,704(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,704(<input_0=%rdi)
+vmovupd   %ymm12,704(%rdi)
 
 # qhasm: clear t0
 # asm 1: vxorpd >t0=reg256#4,>t0=reg256#4,>t0=reg256#4
@@ -5427,9 +5427,9 @@ vorpd  %ymm4,%ymm13,%ymm13
 vxorpd %ymm0,%ymm13,%ymm13
 
 # qhasm: mem256[input_0 + 1120] aligned= t2
-# asm 1: vmovapd   <t2=reg256#14,1120(<input_0=int64#1)
-# asm 2: vmovapd   <t2=%ymm13,1120(<input_0=%rdi)
-vmovapd   %ymm13,1120(%rdi)
+# asm 1: vmovupd   <t2=reg256#14,1120(<input_0=int64#1)
+# asm 2: vmovupd   <t2=%ymm13,1120(<input_0=%rdi)
+vmovupd   %ymm13,1120(%rdi)
 
 # qhasm: diff = t0 ^ t1
 # asm 1: vxorpd <t0=reg256#4,<t1=reg256#13,>diff=reg256#1
@@ -5452,14 +5452,14 @@ vxorpd %ymm0,%ymm3,%ymm3
 vxorpd %ymm0,%ymm12,%ymm12
 
 # qhasm: mem256[input_0 + 352] aligned= t0
-# asm 1: vmovapd   <t0=reg256#4,352(<input_0=int64#1)
-# asm 2: vmovapd   <t0=%ymm3,352(<input_0=%rdi)
-vmovapd   %ymm3,352(%rdi)
+# asm 1: vmovupd   <t0=reg256#4,352(<input_0=int64#1)
+# asm 2: vmovupd   <t0=%ymm3,352(<input_0=%rdi)
+vmovupd   %ymm3,352(%rdi)
 
 # qhasm: mem256[input_0 + 736] aligned= t1
-# asm 1: vmovapd   <t1=reg256#13,736(<input_0=int64#1)
-# asm 2: vmovapd   <t1=%ymm12,736(<input_0=%rdi)
-vmovapd   %ymm12,736(%rdi)
+# asm 1: vmovupd   <t1=reg256#13,736(<input_0=int64#1)
+# asm 2: vmovupd   <t1=%ymm12,736(<input_0=%rdi)
+vmovupd   %ymm12,736(%rdi)
 
 # qhasm: return
 add %r11,%rsp
