@@ -10,52 +10,52 @@
 
 void test_encode_repetition()
 {
-  load_code(&repetition);
+  code_t *repetition = load_codestr("repetition");
 
   uint8_t *zero = (uint8_t *) "\x00";
-  uint8_t zero_codeword[octs(repetition.n)];
-  uint8_t got[octs(repetition.n)];
+  uint8_t zero_codeword[octs(repetition->n)];
+  uint8_t got[octs(repetition->n)];
 
-  bitset_one(got, repetition.n);
-  bitset_zero(zero_codeword, repetition.n);
-  assert(!biteq(got, zero_codeword, repetition.n));
-  encode(&repetition, got, zero);
-  assert(biteq(got, zero_codeword, repetition.n));
+  bitset_one(got, repetition->n);
+  bitset_zero(zero_codeword, repetition->n);
+  assert(!biteq(got, zero_codeword, repetition->n));
+  encode(repetition, got, zero);
+  assert(biteq(got, zero_codeword, repetition->n));
 
   uint8_t *one = (uint8_t *) "\x01";
-  uint8_t one_codeword[octs(repetition.n)];
-  bitset_one(one_codeword, repetition.n);
-  encode(&repetition, got, one);
-  assert(biteq(got, one_codeword, repetition.n));
+  uint8_t one_codeword[octs(repetition->n)];
+  bitset_one(one_codeword, repetition->n);
+  encode(repetition, got, one);
+  assert(biteq(got, one_codeword, repetition->n));
 
-  unload_code(&repetition);
+  unload_code(repetition);
 }
 
 void test_encode_wh()
 {
-  load_code(&wh);
+  code_t *wh = load_codestr("wh");
 
   uint8_t *zero = (uint8_t *) "\x00";
-  uint8_t zero_codeword[octs(wh.n)];
-  uint8_t got[octs(wh.n)];
-  bitset_zero(zero_codeword, wh.n);
-  bitset_one(got, wh.n);
-  assert(!biteq(got, zero_codeword, wh.n));
-  encode(&wh, got, zero);
-  assert(biteq(got, zero_codeword, wh.n));
+  uint8_t zero_codeword[octs(wh->n)];
+  uint8_t got[octs(wh->n)];
+  bitset_zero(zero_codeword, wh->n);
+  bitset_one(got, wh->n);
+  assert(!biteq(got, zero_codeword, wh->n));
+  encode(wh, got, zero);
+  assert(biteq(got, zero_codeword, wh->n));
 
   uint8_t one[] = "\x01";
   uint8_t one_codeword[] = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
-  encode(&wh, got, one);
-  assert(biteq(got, one_codeword, wh.n));
+  encode(wh, got, one);
+  assert(biteq(got, one_codeword, wh->n));
 
   uint8_t w[] = "\x07";
   uint8_t expected[] = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii";
-  bitset_zero(got, wh.n);
-  encode(&wh, got, w);
-  assert(biteq(got, expected, wh.n));
+  bitset_zero(got, wh->n);
+  encode(wh, got, w);
+  assert(biteq(got, expected, wh->n));
 
-  unload_code(&wh);
+  unload_code(wh);
 }
 
 

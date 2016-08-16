@@ -16,7 +16,7 @@ static size_t nOTs = 1 << 10;
 bool active_security = false;
 uint8_t codewordsm = 1;
 size_t codewordsn = 2;
-code_t *code = &wh;
+code_t *code = NULL;
 
 
 #define START_TIMEIT()                                          \
@@ -159,18 +159,6 @@ void usage()
 }
 
 
-code_t *code_from_string(const char *s)
-{
-  if (!strcmp(s, wh.name)) {
-    return &wh;
-  } else if (!strcmp(s, repetition.name)) {
-    return &repetition;
-  } else {
-    fputs("Invalid Linear Code.\n", stderr);
-    exit(EXIT_FAILURE);
-  }
-}
-
 int main(int argc, char **argv)
 {
   char *host = "localhost";
@@ -209,13 +197,17 @@ int main(int argc, char **argv)
       active_security = true;
       break;
     case 'C':
-      code = code_from_string(optarg);
+      code = load_codestr(optarg);
+      if (!code) usage();
       break;
     case '?':
     default:
       usage();
     }
   }
+
+  // If no code was provided, use Walsh-Hadamard.
+  if (!code) code = load_codestr(DEFAULT_CODE);
 
   // XXX.
   // There's a bug in reaceiver.c that produces a segmentation fault when the number
@@ -228,7 +220,6 @@ int main(int argc, char **argv)
   // is less than 64. Right now I don't have enough time to investigate.
   if (nOTs < 64) usage();
 
-  load_code(code);
   if (!strcmp("sender", role))  {
     sender_main(port);
   } else if (!strcmp("receiver", role)) {

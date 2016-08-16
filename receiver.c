@@ -68,7 +68,7 @@ bitmatrix_t kk_receiver(int sockfd, size_t m) {
   }
 
   bitmatrix_t C = new_bitmatrix(ms, code->n);
-  choices = new_bitmatrix(ms, 8);
+  choices = new_bitmatrix(ms, code->k);
   randombits(choices.M, ms * code->k);
   for (size_t i = 0; i < ms; ++i) {
     bitmask(row(choices, i), codewordsn);

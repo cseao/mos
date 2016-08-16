@@ -3,6 +3,8 @@
 
 #include "bitmath.h"
 
+#define DEFAULT_CODE "wh"
+
 typedef struct code {
   const char* name;
 
@@ -14,11 +16,8 @@ typedef struct code {
 } code_t;
 
 
-code_t repetition;
-code_t wh;
-
 void encode(const code_t* code, void *c, const void *word);
-void load_code(code_t * code);
+code_t *load_codestr(const char *alias);
 void unload_code(code_t * code);
 
 /**

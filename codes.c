@@ -18,23 +18,8 @@
 // sage: numpy.packbits(G.numpy('b')).tobytes()
 // 'UUU…\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
 
-
-code_t repetition = {
-  .name = "REP",
-  .n = 128,
-  .k = 1,
-  .file = "repetition.code",
-};
-
-
 // Obtained with:
 // sage: G = codes.WalshCode(8).generator_matrix_systematic()
-code_t wh = {
-  .name = "WH",
-  .n = 256,
-  .k = 8,
-  .file = "wh.code",
-};
 
 
 // Shortened Walsh-Hadamard code. Obtained with:
@@ -45,13 +30,6 @@ code_t wh = {
 // Linear code of length 256, dimension 9 over Finite Field of size 2
 // sage: C.minimum_distance()
 // 128
-code_t shwh = {
-  .name = "shWH",
-  .n = 256,
-  .k = 9,
-  .file = "shwh.code",
-};
-
 
 // sage: C = codes.ExtendedBinaryGolayCode()
 // sage: C
@@ -60,16 +38,19 @@ code_t shwh = {
 // sage: Ge = matrix([c.list() * 16 for c in G])
 // sage: Ge
 // 12 x 384 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
-code_t extgolay = {
-  .name = "golay",
-  .n = 384,
-  .k = 12,
-  .file = "extgolay.code",
+
+
+code_t codes[] = {
+  {.name = "repetition", .n = 128, .k = 1, .file = "repetition.code"},
+  {.name = "wh", .n = 256, .k = 8, .file = "wh.code"},
+  {.name = "shortened-wh", .n = 256, .k = 9, .file = "shwh.code"},
+  {.name = "golay", .n = 384, .k = 12, .file = "extgolay.code"},
+
+  {.name = NULL, .n = 0, .k = 0, .file = NULL},
 };
 
 
-
-void load_code(code_t *code)
+static void load_G(code_t *code)
 {
   const size_t Gsize = code->k * octs(code->n);
   size_t Gread;
@@ -90,9 +71,24 @@ void load_code(code_t *code)
   fclose(Gfile);
 }
 
+code_t *load_codestr(const char *alias)
+{
+  for (int i = 0; codes[i].name; i++) {
+    if (!strcmp(alias, codes[i].name)) {
+      code_t *code = calloc(1, sizeof(code_t));
+      memcpy(code, &codes[i], sizeof(code_t));
+      load_G(code);
+      return code;
+    }
+  }
+  return NULL;
+}
+
+
 void unload_code(code_t *code)
 {
   free_bitmatrix(code->_G);
+  free(code);
 }
 
 void encode(const code_t *code, void *c, const void *word)
