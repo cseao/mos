@@ -26,12 +26,48 @@ code_t repetition = {
   .file = "repetition.code",
 };
 
+
+// Obtained with:
+// sage: G = codes.WalshCode(8).generator_matrix_systematic()
 code_t wh = {
   .name = "WH",
   .n = 256,
   .k = 8,
   .file = "wh.code",
 };
+
+
+// Shortened Walsh-Hadamard code. Obtained with:
+// sage: V = VectorSpace(GF(2), 8)
+// sage: Gt = matrix([[1] + b.list() for b in V])
+// sage: C = LinearCode(Gt.T)
+// sage: C
+// Linear code of length 256, dimension 9 over Finite Field of size 2
+// sage: C.minimum_distance()
+// 128
+code_t shwh = {
+  .name = "shWH",
+  .n = 256,
+  .k = 9,
+  .file = "shwh.code",
+};
+
+
+// sage: C = codes.ExtendedBinaryGolayCode()
+// sage: C
+// Linear code of length 24, dimension 12 over Finite Field of size 2
+// sage: G = C.generator_matrix_systematic()
+// sage: Ge = matrix([c.list() * 16 for c in G])
+// sage: Ge
+// 12 x 384 dense matrix over Finite Field of size 2 (use the '.str()' method to see the entries)
+code_t extgolay = {
+  .name = "golay",
+  .n = 384,
+  .k = 12,
+  .file = "extgolay.code",
+};
+
+
 
 void load_code(code_t *code)
 {
