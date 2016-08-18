@@ -1,2 +1,5 @@
 *.[oa]
+
 ot
+*_test
+*_bench
