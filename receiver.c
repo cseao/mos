@@ -28,8 +28,9 @@ static void receiver_check(const int sockfd, const size_t m)
   }
 
   /* Compute check values */
-  for (size_t j = 0; j < m; ++j) {
-    for (int i = 0; i < SSEC; ++i) {
+  #pragma omp parallel for
+  for (int i = 0; i < SSEC; ++i) {
+    for (size_t j = 0; j < m; ++j) {
       if (getbit(row(mu, i), j)) {
         bitxor(w[i], row(choices, j), code->k);
         bitxor(row(t, i), row(T, j), code->n);

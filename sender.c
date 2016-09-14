@@ -29,8 +29,9 @@ static bool sender_check(const int sockfd, const size_t m)
     bitcpy(q[i], row(QT, m+i), code->n);
   }
 
-  for (size_t j = 0; j < m; ++j) {
-    for (int i = 0; i < SSEC; ++i) {
+#pragma omp parallel for
+  for (int i = 0; i < SSEC; ++i) {
+    for (size_t j = 0; j < m; ++j) {
       if (getbit(row(mu, i), j)) {
         bitxor(q[i], row(QT, j), code->n);
       }
